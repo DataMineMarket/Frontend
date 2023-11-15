@@ -50,57 +50,6 @@ The entry point for the applicaiton is in `app/`
 
 The [ui.shadcn.com](https://ui.shadcn.com) components are included in the `/components/shared/ui` folder.
 
-# 💻 Developer Experience
-
-### 🐕 What is husky
-
-Husky improves your git commits.
-
-You can use it to lint your commit messages, run tests, lint code, etc... when you commit or push. Husky supports all Git hooks.
-
-#### 🪝 Hooks
-
-- pre-commit: lint app codebase
-- commit-msg: apply commintlint
-
-### 📋 What is commitlint
-
-commitlint checks if your commit messages meet the [conventional commit format](https://conventionalcommits.org).
-
-In general the pattern mostly looks like this:
-
-```sh
-type(scope?): subject  #scope is optional; multiple scopes are supported (current delimiter options: "/", "\" and ",")
-```
-
-Real world examples can look like this:
-
-```
-chore: run tests on travis ci
-```
-
-```
-fix(server): send cors headers
-```
-
-```
-feat(blog): add comment section
-```
-
-Common types according to [commitlint-config-conventional (based on the Angular convention)](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional#type-enum) can be:
-
-- build
-- chore
-- ci
-- docs
-- feat
-- fix
-- perf
-- refactor
-- revert
-- style
-- test
-
 # Acknowledgements
 
 Original template was forked from https://github.com/wslyvh/nexth

@@ -3,6 +3,7 @@ import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa"
 
 import { menuAdmin } from "@/config/menu-admin"
 import { menuDashboard } from "@/config/menu-dashboard"
+import { menuUploadData } from "@/config/menu-upload"
 import { siteConfig } from "@/config/site"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { WalletConnect } from "@/components/blockchain/wallet-connect"
@@ -25,6 +26,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <hr className="my-6 border-t border-muted" />
             <h3 className="text-lg font-normal">Admin</h3>
             <SidebarNav items={menuAdmin} />
+            <hr className="my-6 border-t border-muted" />
+            <h3 className="text-lg font-normal">Upload</h3>
+            <SidebarNav items={menuUploadData} />
           </ScrollArea>
           <footer className="fixed bottom-6 flex flex-col border-t pr-2 pt-4">
             <h3 className="text-sm font-semibold">{siteConfig.title}</h3>

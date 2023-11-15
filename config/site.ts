@@ -18,9 +18,9 @@ interface SiteConfig {
 export const SITE_CANONICAL = "https://turboeth.xyz"
 
 export const siteConfig: SiteConfig = {
-  name: "TurboETH",
-  title: "TurboETH - Web3 App Template",
-  emoji: "⚡",
+  name: "Data Nexus",
+  title: "Decentralised Data Hub",
+  emoji: "🌌",
   description:
     "Start building full-stack Web3 applications in minutes with TurboETH.",
   localeDefault: "en",
