@@ -31,7 +31,7 @@ const integrations = [
   {
     title: "Google Fit",
     description: "Upload your personal health data from Google Fit.",
-    href: turboIntegrations.litProtocol.href,
+    href: "/dashboard/upload/google-fit",
     demo: (
       <div className="flex items-center justify-center space-x-20">
         <IsLightTheme>
@@ -56,7 +56,7 @@ const integrations = [
   {
     title: "Spotify",
     description: "Upload your personal health data from Spotify.",
-    href: turboIntegrations.litProtocol.href,
+    href: "/dashboard/upload/google-fit",
     demo: (
       <div className="flex items-center justify-center space-x-20">
         <IsLightTheme>
@@ -81,7 +81,7 @@ const integrations = [
   {
     title: "Plaid",
     description: "Upload your personal financial from Paid.",
-    href: turboIntegrations.litProtocol.href,
+    href: "/dashboard/upload/google-fit",
     demo: (
       <div className="flex items-center justify-center space-x-20">
         <IsLightTheme>
@@ -106,7 +106,7 @@ const integrations = [
   {
     title: "Strava",
     description: "Upload your personal running from Strava.",
-    href: turboIntegrations.litProtocol.href,
+    href: "/dashboard/upload/google-fit",
     demo: (
       <div className="flex items-center justify-center space-x-20">
         <IsLightTheme>
@@ -131,7 +131,7 @@ const integrations = [
   {
     title: "My Fitness Pal",
     description: "Upload your personal fitness data from My Fitness Pal.",
-    href: turboIntegrations.litProtocol.href,
+    href: "/dashboard/upload/google-fit",
     demo: (
       <div className="flex items-center justify-center space-x-20">
         <IsLightTheme>
@@ -165,14 +165,13 @@ export function Web2Integrations({
 }: Web2IntegrationsProps) {
   return (
     <PageSectionGrid className={className} {...props}>
-      {integrations.map(({ title, description, href, demo, large }) => (
+      {integrations.map(({ title, description, href, demo }) => (
         <DemoCard
           key={title}
           title={title}
           description={description}
           href={href}
           demo={demo}
-          large={large}
         />
       ))}
     </PageSectionGrid>
