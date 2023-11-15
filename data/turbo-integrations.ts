@@ -44,6 +44,16 @@ export const turboIntegrations = {
     imgLight: "/integrations/lit-protocol.png",
     imgDark: "/integrations/lit-protocol.png",
   },
+  googleFit: {
+    name: "google-fit",
+    href: "/dashboard/upload/google-fit",
+    url: "https://www.google.com/fit/",
+    description:
+      "Share your own personal health and fitness data.",
+    category: "services",
+    imgLight: "/integrations/fit-icon.svg",
+    imgDark: "/integrations/fit-icon.svg",
+  },
   starter: {
     name: "Starter Template",
     href: "/integration/starter",

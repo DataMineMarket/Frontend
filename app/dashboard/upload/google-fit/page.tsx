@@ -27,22 +27,22 @@ export default function GoogleFitPage() {
   const id = searchParams?.get("id") || ""
 
   return (
-    <div className="container relative mt-20">
+    <div className="container relative mt-10">
       <PageHeader className="pb-8">
         <LightDarkImage
-          LightImage={turboIntegrations.litProtocol.imgDark}
-          DarkImage={turboIntegrations.litProtocol.imgLight}
+          LightImage={turboIntegrations.googleFit.imgDark}
+          DarkImage={turboIntegrations.googleFit.imgLight}
           alt="Google Fit Logo"
           width={100}
           height={100}
         />
-        <PageHeaderHeading>Google Fit</PageHeaderHeading>
+        <PageHeaderHeading>Fit</PageHeaderHeading>
         <PageHeaderDescription>
           Upload your personal health data from Google Fit to earn tokens.
         </PageHeaderDescription>
         <PageHeaderCTA>
           <Link
-            href={turboIntegrations.litProtocol.url}
+            href={turboIntegrations.googleFit.url}
             target="_blank"
             rel="noreferrer noopener"
             className={cn(buttonVariants({ variant: "outline" }))}
@@ -53,14 +53,17 @@ export default function GoogleFitPage() {
         </PageHeaderCTA>
       </PageHeader>
       <PageSection>
-        <Tabs defaultValue="share" className="w-full max-w-4xl">
+        <Tabs defaultValue="upload data" className="w-full max-w-4xl">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="share">Share</TabsTrigger>
-            <TabsTrigger value="unseal">Unseal</TabsTrigger>
+            <TabsTrigger value="upload data">Upload Data</TabsTrigger>
+            <TabsTrigger value="permissions">Permissions</TabsTrigger>
           </TabsList>
-          <TabsContent value="share" className="mt-6">
+          <TabsContent value="upload data" className="mt-6">
             <IsWalletConnected>
-              <FormLitEncryptMessage />
+              <div>
+                {/* Add in Blue button to connect to Google fit to retrieve data*/}
+
+              </div>
             </IsWalletConnected>
             <IsWalletDisconnected>
               <div className="flex items-center justify-center">
@@ -68,9 +71,33 @@ export default function GoogleFitPage() {
               </div>
             </IsWalletDisconnected>
           </TabsContent>
-          <TabsContent value="unseal" className="mt-6">
+          <TabsContent value="permissions" className="mt-6">
             <IsWalletConnected>
-              <FormLitDecryptMessage initialEencryptedMessageId={id} />
+              <div>
+                <p className="mb-2 text-lg font-semibold text-gray-700">
+                  By clicking 'Upload', you'll be directed to our secure API
+                  integration portal, where you can upload your Google Fit data.
+                </p>
+                <p className="mb-4 text-gray-600">
+                  You'll be asked to grant us the following permissions:
+                </p>
+                <ul className="list-inside list-disc text-gray-600">
+                  <li className="mb-1">
+                    View your Google Fit data: This allows us to fetch the
+                    necessary fitness data for your profile.
+                  </li>
+                  <li className="mb-1">
+                    Upload Google Fit data: This allows us to upload fitness
+                    data to your Google Fit account, if you choose to sync data
+                    from our app.
+                  </li>
+                  <li className="mb-1">
+                    Manage your Google Fit data: This allows us to update or
+                    delete fitness data, ensuring your data in our app stays in
+                    sync with Google Fit.
+                  </li>
+                </ul>
+              </div>
             </IsWalletConnected>
             <IsWalletDisconnected>
               <div className="flex items-center justify-center">
