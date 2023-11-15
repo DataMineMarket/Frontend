@@ -22,115 +22,31 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 import { ERC721TokenUriImage, ERC721TokenUriName } from "@/integrations/erc721"
+import { ButtonSIWELogin } from "@/integrations/siwe/components/button-siwe-login"
+import { ButtonSIWELogout } from "@/integrations/siwe/components/button-siwe-logout"
+import { IsSignedIn } from "@/integrations/siwe/components/is-signed-in"
+import { IsSignedOut } from "@/integrations/siwe/components/is-signed-out"
 
 const integrations = [
   {
-    title: "One-click Deploy",
-    description:
-      "Start your next Web3 project in ⚡ Turbo Mode with a deploy to [Vercel](https://vercel.com/) in one click.",
-    demo: (
-      <a href={DEPLOY_URL} rel="noreferrer" target={"_blank"}>
-        <img
-          alt="Deploy with Vercel"
-          src="https://vercel.com/button"
-          width={120}
-        />
-      </a>
-    ),
-  },
-  {
-    title: "Sign-In With Ethereum",
-    description: turboIntegrations.siwe.description,
-    href: turboIntegrations.siwe.href,
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <Image
-          alt="Prisma logo"
-          height={80}
-          src="/integrations/siwe.svg"
-          width={80}
-        />
-      </div>
-    ),
-  },
-  {
-    title: "Rainbowkit",
-    description:
-      "The best way to connect a wallet. Designed for everyone. Built for developers.",
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <Image
-          alt="Rainbow logo"
-          height={100}
-          src="/integrations/rainbowkit.svg"
-          width={100}
-        />
-      </div>
-    ),
-  },
-  {
-    title: "Web3 Login",
-    description: "Authenticate using an Ethereum Account",
-    demo: (
-      <div className="text-center">
-        <IsWalletConnected>
-          <IsSignedIn>
-            <ButtonSIWELogout />
-          </IsSignedIn>
-          <IsSignedOut>
-            <ButtonSIWELogin label="Sign-In With Ethereum" />
-          </IsSignedOut>
-        </IsWalletConnected>
-        <IsWalletDisconnected>
-          <WalletConnect />
-        </IsWalletDisconnected>
-      </div>
-    ),
-  },
-  {
-    title: "ERC721 WAGMI",
-    description:
-      "Read and Write to ERC721 smart contracts using minimal UI components.",
-    demo: (
-      <div className="text-center">
-        <ERC721TokenUriName
-          address={"0xbcc664b1e6848caba2eb2f3de6e21f81b9276dd8"}
-          chainId={1}
-          tokenId={BigInt(1)}
-        />
-        <ERC721TokenUriImage
-          address={"0xbcc664b1e6848caba2eb2f3de6e21f81b9276dd8"}
-          chainId={1}
-          className="mx-auto my-4 rounded-xl border-2 border-white shadow-md"
-          height={100}
-          tokenId={BigInt(1)}
-          width={100}
-        />
-        <Link href={`/integration/erc721`} className={cn(buttonVariants())}>
-          View Token Page
-        </Link>
-      </div>
-    ),
-  },
-  {
-    title: turboIntegrations.litProtocol.name,
-    description: turboIntegrations.litProtocol.description,
+    title: "Google Fit",
+    description: "Upload your personal health data from Google Fit.",
     href: turboIntegrations.litProtocol.href,
     demo: (
       <div className="flex items-center justify-center space-x-20">
         <IsLightTheme>
           <Image
-            alt="Lit Protocol logo"
+            alt="Google Fit Logo"
             height={100}
-            src={turboIntegrations.litProtocol.imgDark}
+            src="/integrations/fit-icon.svg"
             width={100}
           />
         </IsLightTheme>
         <IsDarkTheme>
           <Image
-            alt="Lit Protocol logo"
+            alt="Google Fit Logo"
             height={100}
-            src={turboIntegrations.litProtocol.imgLight}
+            src="/integrations/fit-icon.svg"
             width={100}
           />
         </IsDarkTheme>
@@ -138,18 +54,102 @@ const integrations = [
     ),
   },
   {
-    title: turboIntegrations.starter.name,
-    description: turboIntegrations.starter.description,
-    href: turboIntegrations.starter.href,
+    title: "Spotify",
+    description: "Upload your personal health data from Spotify.",
+    href: turboIntegrations.litProtocol.href,
     demo: (
       <div className="flex items-center justify-center space-x-20">
-        <LightDarkImage
-          LightImage={turboIntegrations.starter.imgDark}
-          DarkImage={turboIntegrations.starter.imgLight}
-          alt="Starter logo"
-          height={100}
-          width={100}
-        />
+        <IsLightTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/spotify-icon.svg"
+            width={100}
+          />
+        </IsLightTheme>
+        <IsDarkTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/spotify-icon.svg"
+            width={100}
+          />
+        </IsDarkTheme>
+      </div>
+    ),
+  },
+  {
+    title: "Plaid",
+    description: "Upload your personal financial from Paid.",
+    href: turboIntegrations.litProtocol.href,
+    demo: (
+      <div className="flex items-center justify-center space-x-20">
+        <IsLightTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/plaid-icon.png"
+            width={100}
+          />
+        </IsLightTheme>
+        <IsDarkTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/plaid-icon.png"
+            width={100}
+          />
+        </IsDarkTheme>
+      </div>
+    ),
+  },
+  {
+    title: "Strava",
+    description: "Upload your personal running from Strava.",
+    href: turboIntegrations.litProtocol.href,
+    demo: (
+      <div className="flex items-center justify-center space-x-20">
+        <IsLightTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/strava.png"
+            width={100}
+          />
+        </IsLightTheme>
+        <IsDarkTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/strava.png"
+            width={100}
+          />
+        </IsDarkTheme>
+      </div>
+    ),
+  },
+  {
+    title: "My Fitness Pal",
+    description: "Upload your personal fitness data from My Fitness Pal.",
+    href: turboIntegrations.litProtocol.href,
+    demo: (
+      <div className="flex items-center justify-center space-x-20">
+        <IsLightTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/mfp.png"
+            width={100}
+          />
+        </IsLightTheme>
+        <IsDarkTheme>
+          <Image
+            alt="Spotify"
+            height={100}
+            src="/integrations/mfp.png"
+            width={100}
+          />
+        </IsDarkTheme>
       </div>
     ),
   },
@@ -227,7 +227,7 @@ function DemoCard({ title, description, href, demo, large }: DemoCardProps) {
         </div>
         {!href ? null : (
           <Link href={href} className={cn(buttonVariants(), "my-4")}>
-            Demo
+            Upload Data
           </Link>
         )}
       </div>
