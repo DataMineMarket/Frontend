@@ -35,13 +35,14 @@ export default function GoogleFitPage() {
   // Parse authorization code from URL when user is redirected back to the application
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code")
-    setIsConnectedModal(true)
 
     if (code) {
+      setIsConnectedModal(true)
+
       // Get access token and a refresh token
       exchangeCodeForTokens(code)
         .then((response) => {
-          console.log("Tokens: ", response.data) // This will log the access and refresh tokens
+          console.log("Tokens: ", response.data.access_token) // This will log the access and refresh tokens
         })
         .catch((error) => {
           console.error("Error: ", error)
@@ -92,7 +93,7 @@ export default function GoogleFitPage() {
           </TabsList>
           <TabsContent value="upload data" className="mt-6">
             <IsWalletConnected>
-              <div>
+              <div className="my-4">
                 <p>
                   By clicking &apos;Upload&apos;, you&apos;ll be directed to our
                   secure API integration portal, where you can upload your

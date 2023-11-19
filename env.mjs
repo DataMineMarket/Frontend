@@ -23,6 +23,9 @@ export const env = createEnv({
     MORALIS_API_KEY: z.string().min(1).optional(),
     GITCOIN_PASSPORT_SCORER_ID: z.string().min(1).optional(),
     GITCOIN_PASSPORT_API_KEY: z.string().min(1).optional(),
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+    NEXT_PUBLIC_GOOGLE_REDIRECT_URL: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_USE_PUBLIC_PROVIDER: z.enum(["true", "false"]).default("true"),
@@ -52,8 +55,8 @@ export const env = createEnv({
     NEXT_PUBLIC_INFURA_API_KEY: process.env.NEXT_PUBLIC_INFURA_API_KEY,
     NEXT_PUBLIC_LIVEPEER_API_KEY: process.env.NEXT_PUBLIC_LIVEPEER_API_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    GOOGLE_REDIRECT_URL: process.env.GOOGLE_REDIRECT_URL,
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
+    NEXT_PUBLIC_GOOGLE_REDIRECT_URL: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL,
   },
 })
