@@ -1,0 +1,3 @@
+[submodule "DataNexusContracts"]
+	path = DataNexusContracts
+	url = https://github.com/DataMineMarket/DataNexusContracts.git

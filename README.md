@@ -2,6 +2,19 @@
 
 ## Getting Started
 
+Clone the repository and install dependencies.
+
+```bash
+git clone https://github.com/DataMineMarket/Frontend.git
+```
+
+Update and pull the submodules for Chainlink Functions. This submodule is needed for pulling the scripts to post data on ipfs.
+
+```bash
+git submodule init
+git submodule update --init --recursive
+```
+
 The `pnpm` CLI is the recommended package manager but `npm` and `yarn` should work too.
 
 ```bash
@@ -20,7 +33,7 @@ pnpm dev
 pnpm build
 ```
 
-### Development
+## FE Development
 
 The entry point for the applicaiton is in `app/`
 
@@ -49,6 +62,14 @@ The entry point for the applicaiton is in `app/`
 - [React Icons](https://react-icons.github.io/react-icons) – Beautifully simple, pixel-perfect icons
 
 The [ui.shadcn.com](https://ui.shadcn.com) components are included in the `/components/shared/ui` folder.
+
+## Dependencies - Functions
+
+A key dependency for the [Data Nexus Contracts](https://github.com/DataMineMarket/DataNexusContracts) to post data on ipfs in a decentralised manner is [Chainlink Functions](https://docs.chain.link/chainlink-functions).
+
+### Setup
+
+To set up this repository to make use of functions, please follow the following steps:
 
 # Acknowledgements
 
