@@ -15,20 +15,20 @@ interface SiteConfig {
   }
 }
 
-export const SITE_CANONICAL = "https://turboeth.xyz"
+export const SITE_CANONICAL = "https://datanexusverse.vercel.app/"
 
 export const siteConfig: SiteConfig = {
   name: "Data Nexus",
   title: "Decentralised Data Hub",
   emoji: "🌌",
   description:
-    "Start building full-stack Web3 applications in minutes with TurboETH.",
+    "Democratising Data Acquisition and Ownership.",
   localeDefault: "en",
   links: {
-    docs: "https://docs.turboeth.xyz/overview",
+    docs: "https://github.com/DataMineMarket/DataNexusContracts/",
     discord: "https://discord.gg/U4jy7Xfh76",
     twitter: "https://twitter.com/district_labs",
-    github: "https://github.com/turbo-eth/template-web3-app",
+    github: "https://github.com/DataMineMarket/Frontend",
   },
 }
 

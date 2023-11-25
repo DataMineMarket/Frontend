@@ -15,6 +15,8 @@ import {
 import { CopyButton } from "@/components/shared/copy-button"
 import { ExampleDemos } from "@/components/shared/example-demos"
 
+import { Web2Integrations } from "../dashboard/upload/integrations"
+
 export default function HomePage() {
   return (
     <div className="container relative mt-20 px-0">
@@ -26,7 +28,7 @@ export default function HomePage() {
           height={80}
           className="h-20 w-20 rounded-2xl"
         />
-        <PageHeaderHeading>Build Web3 in Turbo&nbsp;Mode</PageHeaderHeading>
+        <PageHeaderHeading>Data Nexus&nbsp;</PageHeaderHeading>
         <PageHeaderDescription>{siteConfig.description}</PageHeaderDescription>
         <PageHeaderCTA>
           <Link
@@ -47,28 +49,16 @@ export default function HomePage() {
             <FaGithub className="mr-2 h-4 w-4" />
             Github
           </Link>
-          <Link
-            href={siteConfig.links.discord}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={cn(
-              buttonVariants(),
-              "bg-[#7289da] text-white hover:bg-[#7289da]/80"
-            )}
-          >
-            <FaDiscord className="mr-2 h-4 w-4" />
-            Discord
-          </Link>
         </PageHeaderCTA>
         <PageHeaderCTA>
           <CopyButton value="pnpm create turbo-eth@latest">
             <span className="text-xs sm:text-base">
-              pnpm create turbo-eth@latest
+              Created with Chainlink Services
             </span>
           </CopyButton>
         </PageHeaderCTA>
       </PageHeader>
-      <ExampleDemos />
+      <Web2Integrations />
     </div>
   )
 }
