@@ -21,6 +21,13 @@ type OAuthTokenResponse = {
   refresh_token?: string // Optional property
 }
 
+// Upload google fit to ipfs using chainlink functions
+// TODO: Implement this
+
+// Obtain google fit data using chainlink functions
+// TODO: Implement this
+export const getGoogleFitData = async (): Promise<void> => {}
+
 // Exchange the authorization code for tokens
 // TODO: This should be done on the server side
 export const exchangeCodeForTokens = async (
