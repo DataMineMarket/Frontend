@@ -46,7 +46,7 @@ export const turboIntegrations = {
   },
   googleFit: {
     name: "google-fit",
-    href: "/dashboard/upload/google-fit",
+    href: "/dashboard/upload/data-provider?source=GoogleFit",
     url: "https://www.google.com/fit/",
     description:
       "Share your own personal health and fitness data.",
