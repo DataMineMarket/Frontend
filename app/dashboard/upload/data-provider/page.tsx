@@ -50,6 +50,8 @@ export default function DataProviderPage() {
   const [tokenKey, setTokenKey] = useState("")
   const [dataKey, setDataKey] = useState("")
   const [args, setArgs] = useState<string[]>()
+  const [dataResponse, setDataResponse] = useState<string>("")
+  const [transactionState, setTransactionState] = useState("")
 
   const { chain } = useNetwork()
   const chainId = chain!.id
@@ -114,17 +116,18 @@ export default function DataProviderPage() {
   })
   const { data, isLoading, isSuccess, write } = useContractWrite(config)
 
-
-  useEffect(() => {
-    console.log("result", data, isLoading, isSuccess)
-  }, [data, isLoading, isSuccess])
-
   useContractEvent({
     address: address,
     abi: FunctionsConsumerAbi,
     eventName: "Response",
-    listener(log) {
-      console.log("response fulfill:", log)
+    listener(log: any) {
+      setDataResponse(log[0].args.response)
+      if (log[0].args.response === "0x") {
+        setTransactionState("failed")
+        console.log("failed log: ", log)
+      } else {
+        setTransactionState("success")
+      }
     },
   })
 
@@ -135,7 +138,6 @@ export default function DataProviderPage() {
   // Parse authorization code from URL when user is redirected back to the application
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code")
-    console.log("address: ", sessionStorage.getItem("address"))
     setAddress(sessionStorage.getItem("address") as Address)
 
     if (code) {
@@ -144,15 +146,11 @@ export default function DataProviderPage() {
       // Get access token and a refresh token
       exchangeCodeForTokens(code)
         .then((response) => {
-          console.log("Tokens: ", response.data.access_token) // This will log the access and refresh tokens
           setAuthToken(response.data.access_token)
         })
         .catch((error) => {
           console.error("Error: ", error)
         })
-
-      // Send the tokens to chainlink functions
-      console.log("Code: ", code)
 
       // Redirect to page without code in URL
       window.history.replaceState(
@@ -184,14 +182,29 @@ export default function DataProviderPage() {
         </PageHeaderCTA>
       </PageHeader>
       <PageSection>
-        Address: {address}
         {!authToken ? null : (
-          <button
-            className="rounded border border-blue-700 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-            onClick={() => write!()}
-          >
-            Provide Data
-          </button>
+          <div>
+            {transactionState == "" ? (
+              <button
+                className="rounded border border-blue-700 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                onClick={() => {
+                  setTransactionState("pending")
+                  console.log("Starting Transaction...")
+                  write!()
+                }}
+              >
+                Provide Data
+              </button>
+            ) : (
+              <div>
+                {transactionState == "pending" ? (
+                  <b className="text-2xl">Data Uploading Pending...</b>
+                ) : (
+                  <b className="text-2xl">🎉 Data Upload Succesfull! 🎉</b>
+                )}
+              </div>
+            )}
+          </div>
         )}
         <Tabs defaultValue="upload data" className="w-full max-w-4xl">
           <TabsContent value="upload data" className="mt-6">
@@ -199,8 +212,8 @@ export default function DataProviderPage() {
               {integrationDescription.disclaimer}
               <div>
                 {authToken ? (
-                  <div className="flex justify-center text-3xl">
-                    Account Connected ✅
+                  <div className="flex justify-center text-xl">
+                    {integrationDescription.title} Account Connected ✅
                   </div>
                 ) : (
                   <div className="flex justify-center">
