@@ -1,7 +1,7 @@
 export const integrationCategories = [
+  "health",
   "general",
   "entertainment",
-  "health",
 ] as const
 
 interface TurboIntegration {
@@ -22,8 +22,8 @@ export const turboIntegrations = {
     description:
       "Share you own music data",
     category: "entertainment",
-    imgLight: "/integrations/spotify-protocol.svg",
-    imgDark: "/integrations/spotify-protocol.svg",
+    imgLight: "/integrations/spotify-icon.svg",
+    imgDark: "/integrations/spotify-icon.svg",
   },
   googleFit: {
     name: "Google Fit",
