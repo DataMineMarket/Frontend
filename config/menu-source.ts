@@ -1,9 +1,9 @@
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Menu Upload Data
+// Menu Admin
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-export const menuUploadData = [
+export const menuSourceData = [
   {
-    label: "Fuffil Data Request",
-    href: "/dashboard/upload",
+    label: "Create Data Request",
+    href: "/dashboard/source-data",
   },
 ]
