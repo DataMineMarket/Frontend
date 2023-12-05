@@ -60,6 +60,13 @@ export function Web2Integrations({
 }: Web2IntegrationsProps) {
   const { chain, chains } = useNetwork()
   const chainId = chain!.id
+  // Throws error if chain id is not in contract addresses
+  if (!contractAddresses[chainId]) {
+    throw new Error(
+      `Chain ID ${chainId} is not supported by the DataListingFactory contract` +
+        `Supported chains: ${Object.keys(contractAddresses).join(", ")}`
+    )
+  }
   const dataListingFactoryAddress =
     contractAddresses[chainId]["DataListingFactory"]
 
