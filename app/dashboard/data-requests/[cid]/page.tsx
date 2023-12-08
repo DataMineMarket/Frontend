@@ -22,8 +22,8 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 
 export default function PageData() {
-  const cid = usePathname().replace("/dashboard/data-requests/", "")
-  const formattedCid: `0x${string}` | undefined = `0x${cid}` as
+  const cid = usePathname().split("&address=").pop() as string
+  const formattedCid: `0x${string}` | undefined = `${cid}` as
     | `0x${string}`
     | undefined
   const [dataCid, setDataCid] = useState<string[]>([])
@@ -59,7 +59,7 @@ export default function PageData() {
             </h3>
             <span className="font-light">
               <div className="mt-4">
-                <span className="text-3xl font-light">{cid}</span>
+                <span className="text-xl font-light">Data Request: {cid}</span>
               </div>
             </span>
           </div>

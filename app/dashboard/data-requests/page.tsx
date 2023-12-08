@@ -76,7 +76,7 @@ export default function PageDataRequest() {
                 contractAddress={address}
                 dateCreated={today} // Example date, replace with actual data if available
                 dataPointQuantity="42" // Example quantity, replace with actual data if available
-                href={`/data/${address}`} // Construct the destination URL
+                href={`/dashboard/data-requests/${address}`} // Construct the destination URL
                 // ... additional props if needed
               />
             ))
