@@ -19,7 +19,7 @@ import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected
 import { Web2Integrations } from "../upload/integrations"
 
 export default function PageDataRequest() {
-  const [listingAddresses, setListingAddresses] = useState<string[]>()
+  const [listingAddresses, setListingAddresses] = useState<string[]>([])
   const { chain } = useNetwork()
   const chainId = chain!.id
 
@@ -57,7 +57,18 @@ export default function PageDataRequest() {
             </h3>
           </div>
           {
-            // Create a card for every contract address / listing
+            // Map over listingAddresses and render a RequestCard for each one
+            listingAddresses.map((address, index) => (
+              <RequestCard
+                key={index}
+                dataSource={`Data Source #${index + 1}`} // Example data source title, replace with actual data if available
+                contractAddress={address}
+                dateCreated="2023-12-08" // Example date, replace with actual data if available
+                dataPointQuantity="42" // Example quantity, replace with actual data if available
+                href={`/data/${address}`} // Construct the destination URL
+                // ... additional props if needed
+              />
+            ))
           }
         </div>
       </IsWalletConnected>

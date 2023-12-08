@@ -26,16 +26,13 @@ export default function PageData() {
   const formattedCid: `0x${string}` | undefined = `0x${cid}` as
     | `0x${string}`
     | undefined
-  const [dataCid, setDataCid] = useState<string[]>()
+  const [dataCid, setDataCid] = useState<string[]>([])
 
-  const { chain } = useNetwork()
-  const chainId = chain!.id
-
-  // Add in Hook for getting all the data requests contracts that the user has created
+  // Hook to get all the data fuffilled for a given data listing contract
   useContractRead({
     address: formattedCid,
     abi: FunctionsConsumerAbi,
-    functionName: "getDataCIDs", // change this to owner mapped function
+    functionName: "getDataCIDs",
     args: [],
     watch: true,
     onSuccess: (data: string[]) => {
@@ -68,6 +65,15 @@ export default function PageData() {
           </div>
           {
             // Create a data card for every data CID
+            dataCid.map((dataCidItem, index) => (
+              <DataCard
+                key={index} // It's better to use a unique id as key if possible
+                cid={cid}
+                dataCid={dataCidItem}
+                href={`/path-for-data-card/${dataCidItem}`} // Replace with actual path
+                // ... additional props if needed
+              />
+            ))
           }
         </div>
       </IsWalletConnected>
