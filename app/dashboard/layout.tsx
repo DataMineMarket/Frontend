@@ -25,9 +25,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <h3 className="text-lg font-normal">User</h3>
             <SidebarNav items={menuDashboard} />
             <hr className="my-6 border-t border-muted" />
-            <h3 className="text-lg font-normal">Admin</h3>
-            <SidebarNav items={menuAdmin} />
-            <hr className="my-6 border-t border-muted" />
             <h3 className="text-lg font-normal">Source Data</h3>
             <SidebarNav items={menuSourceData} />
             <hr className="my-6 border-t border-muted" />
