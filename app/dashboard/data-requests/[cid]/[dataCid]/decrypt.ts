@@ -1,5 +1,32 @@
 import { readFileSync } from "fs";
 
+
+export async function downloadDecryptedData(dataCid: string) {
+    // Replace the following line with your actual data fetching/decrypting logic
+    const decryptedData = await getDecryptedData(dataCid);
+
+    // Create a blob from your data
+    const blob = new Blob([decryptedData], { type: 'text/plain' });
+
+    // Create a link element
+    const link = document.createElement('a');
+
+    // Set the download attribute with a filename
+    link.download = 'decryptedData.txt';
+
+    // Create a URL for the blob
+    link.href = window.URL.createObjectURL(blob);
+
+    // Append the link to the DOM (it doesn't have to be visible)
+    document.body.appendChild(link);
+
+    // Programmatically click the link to trigger the download
+    link.click();
+
+    // Remove the link from the DOM
+    link.parentNode.removeChild(link);
+  };
+
 export async function getDecryptedData(dataCid: string) : Promise<string> {
   const dataPrivKey= readFileSync("./dataKey.txt", "utf-8");
   const encodedDataKey = base64ToArrayBuffer(dataPrivKey);
