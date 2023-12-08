@@ -92,6 +92,7 @@ export function Web2Integrations({
     functionName: "getDataListingSources",
     watch: true,
     onSuccess: (data: string[]) => {
+      console.log("Data Sources", data)
       setDataSources(data)
     },
   })

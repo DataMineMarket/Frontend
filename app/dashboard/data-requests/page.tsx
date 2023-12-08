@@ -7,7 +7,7 @@ import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
 import { motion, MotionProps } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import Balancer from "react-wrap-balancer"
-import { useContractRead, useNetwork } from "wagmi"
+import { useAccount, useContractRead, useNetwork } from "wagmi"
 
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/config/design"
 import { cn } from "@/lib/utils"
@@ -22,19 +22,30 @@ export default function PageDataRequest() {
   const [listingAddresses, setListingAddresses] = useState<string[]>([])
   const { chain } = useNetwork()
   const chainId = chain!.id
+  const account = useAccount()
+  const accAddress = account.address
 
   const dataListingFactoryAddress =
     contractAddresses[chainId]["DataListingFactory"]
+
+  // TODO: Quick fix for date
+  const todayDate = new Date()
+  const today = todayDate.toISOString().slice(0, 10)
 
   // Add in Hook for getting all the data requests contracts that the user has created
   useContractRead({
     address: dataListingFactoryAddress,
     abi: DataListingFactoryAbi,
-    functionName: "getDataListings", // change this to owner mapped function
-    args: [],
+    functionName: "getOwnerListings", // change this to owner mapped function
+    // args: ["0x6759E6cb48eD1AfDb1DC6DD614Ab7868a595b1cE"],
+    args: [accAddress],
     watch: true,
     onSuccess: (data: string[]) => {
+      console.log("DATA:", data)
       setListingAddresses(data)
+    },
+    onError: (error) => {
+      console.log("ERROR:", error)
     },
   })
 
@@ -63,7 +74,7 @@ export default function PageDataRequest() {
                 key={index}
                 dataSource={`Data Source #${index + 1}`} // Example data source title, replace with actual data if available
                 contractAddress={address}
-                dateCreated="2023-12-08" // Example date, replace with actual data if available
+                dateCreated={today} // Example date, replace with actual data if available
                 dataPointQuantity="42" // Example quantity, replace with actual data if available
                 href={`/data/${address}`} // Construct the destination URL
                 // ... additional props if needed
