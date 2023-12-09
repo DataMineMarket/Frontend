@@ -67,20 +67,38 @@ export default function PageDataRequest() {
               </span>
             </h3>
           </div>
-          {
-            // Map over listingAddresses and render a RequestCard for each one
-            listingAddresses.map((address, index) => (
-              <RequestCard
-                key={index}
-                dataSource={`Data Source #${index + 1}`} // Example data source title, replace with actual data if available
-                contractAddress={address}
-                dateCreated={today} // Example date, replace with actual data if available
-                dataPointQuantity="42" // Example quantity, replace with actual data if available
-                href={`/dashboard/data-requests/${address}`} // Construct the destination URL
-                // ... additional props if needed
-              />
-            ))
-          }
+          <div className="mx-auto mt-6 grid w-full max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {
+              // check if listingAddresses is empty
+              listingAddresses.length != 0 ? (
+                // Map over listingAddresses and render a RequestCard for each one
+                listingAddresses.map((address, index) => (
+                  <RequestCard
+                    key={index}
+                    dataSource={`Data Source #${index + 1}`}
+                    contractAddress={address}
+                    dateCreated={today} // Example date, replace with actual data if available
+                    href={`/dashboard/data-requests/${address}`} // Construct the destination URL
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center">
+                  <div className="text-center">
+                    <p className="text-sm font-bold lg:text-6xl">
+                      <span className="text-xl font-bold">
+                        No Data Requests
+                      </span>
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <span className="text-xl font-light">
+                      Create a Data Request to view your dashboard.
+                    </span>
+                  </div>
+                </div>
+              )
+            }
+          </div>
         </div>
       </IsWalletConnected>
       <IsWalletDisconnected>
@@ -96,7 +114,7 @@ interface RequestCardProps extends MotionProps {
   dataSource: string
   contractAddress: string
   dateCreated: string
-  dataPointQuantity: string
+  // dataPointQuantity: string
   href: string
 }
 
@@ -104,47 +122,22 @@ function RequestCard({
   dataSource,
   contractAddress,
   dateCreated,
-  dataPointQuantity,
   href,
 }: RequestCardProps) {
   return (
     <motion.div
       variants={fadeUpVariant()}
-      className="relative col-span-1 overflow-hidden rounded-xl border bg-card px-4 shadow-sm transition-shadow hover:shadow-md"
+      className="relative col-span-1 overflow-hidden rounded-lg border border-gray-300 bg-white p-6 shadow-sm transition-shadow hover:shadow-lg"
     >
-      <div className="flex h-60 items-center justify-center">{dataSource}</div>
-      <div className="mx-auto max-w-xl text-center">
-        <h2 className="mb-3 bg-gradient-to-br from-black to-stone-500 bg-clip-text text-xl font-bold text-transparent dark:from-stone-100 dark:to-emerald-200 md:text-3xl md:font-normal">
-          <Balancer>{title}</Balancer>
-        </h2>
-        <div className="prose-sm md:prose -mt-2 leading-normal text-muted-foreground">
-          <Balancer>
-            <ReactMarkdown
-              components={{
-                a: ({ ...props }) => (
-                  <a
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    {...props}
-                    className="font-medium text-foreground underline transition-colors dark:text-blue-200"
-                  />
-                ),
-
-                code: ({ ...props }) => (
-                  <code
-                    {...props}
-                    className="rounded-sm px-1 py-0.5 font-mono font-medium text-foreground"
-                  />
-                ),
-              }}
-            >
-              {dateCreated}
-            </ReactMarkdown>
-          </Balancer>
-        </div>
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-sm font-semibold text-gray-500">{dataSource}</div>
+        <div className="mb-4 text-lg text-gray-700">{dateCreated}</div>
         <Link
           href={`${href}&address=${contractAddress}`}
-          className={cn(buttonVariants(), "my-4")}
+          className={cn(
+            buttonVariants(),
+            "inline-block rounded-full bg-blue-600 px-6 py-2 text-center text-sm font-medium leading-6 text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+          )}
         >
           View Data Collected
         </Link>

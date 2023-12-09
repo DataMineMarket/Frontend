@@ -40,6 +40,8 @@ export default function PageData() {
     },
   })
 
+  const noDataCIDs = dataCid.length < 1
+
   return (
     <motion.div
       animate="show"
@@ -51,37 +53,27 @@ export default function PageData() {
     >
       <IsWalletConnected>
         <div className="col-span-12 flex flex-col items-center justify-center lg:col-span-9">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold lg:text-6xl">
-              <span className="bg-gradient-to-br from-indigo-600 to-purple-700 bg-clip-text text-transparent dark:from-indigo-100 dark:to-purple-200">
-                Decrypt and Download Data
-              </span>
-            </h3>
-            <span className="font-light">
-              <div className="mt-4">
-                <span className="text-xl font-light">Data Request: {cid}</span>
-              </div>
-            </span>
+          <div className="text-center">{/* ... existing code */}</div>
+          <div className="mx-auto mt-6 grid w-full max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {noDataCIDs ? (
+              <p className="col-span-full text-lg text-gray-600">
+                No data has been collected for this data request.
+              </p>
+            ) : (
+              dataCid.map((dataCidItem, index) => (
+                <DataCard
+                  key={dataCidItem} // Use dataCidItem as key for uniqueness
+                  cid={cid}
+                  dataCid={dataCidItem}
+                  href={`/path-for-data-card/${dataCidItem}`} // Replace with actual path
+                  // ... additional props if needed
+                />
+              ))
+            )}
           </div>
-          {
-            // Create a data card for every data CID
-            dataCid.map((dataCidItem, index) => (
-              <DataCard
-                key={index} // It's better to use a unique id as key if possible
-                cid={cid}
-                dataCid={dataCidItem}
-                href={`/path-for-data-card/${dataCidItem}`} // Replace with actual path
-                // ... additional props if needed
-              />
-            ))
-          }
         </div>
       </IsWalletConnected>
-      <IsWalletDisconnected>
-        <h3 className="text-lg font-normal">
-          Connect Wallet to view your dashboard.
-        </h3>
-      </IsWalletDisconnected>
+      <IsWalletDisconnected>{/* ... existing code */}</IsWalletDisconnected>
     </motion.div>
   )
 }
@@ -96,16 +88,17 @@ function DataCard({ cid, dataCid, href }: DataCardProps) {
   return (
     <motion.div
       variants={fadeUpVariant()}
-      className="relative col-span-1 overflow-hidden rounded-xl border bg-card px-4 shadow-sm transition-shadow hover:shadow-md"
+      className="relative col-span-1 overflow-hidden rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-sm transition-shadow hover:shadow-lg"
     >
-      <div className="flex h-60 items-center justify-center">{dataCid}</div>
-      <div className="mx-auto max-w-xl text-center">
-        <h2 className="mb-3 bg-gradient-to-br from-black to-stone-500 bg-clip-text text-xl font-bold text-transparent dark:from-stone-100 dark:to-emerald-200 md:text-3xl md:font-normal">
-          <Balancer>{title}</Balancer>
-        </h2>
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-sm font-semibold text-gray-500">{cid}</div>
+        <div className="mb-4 mt-1 text-3xl font-bold">{dataCid}</div>
         <Link
           href={`${href}/data-requests/${cid}/${dataCid}`}
-          className={cn(buttonVariants(), "my-4")}
+          className={cn(
+            "inline-block rounded-full bg-blue-600 px-6 py-2 text-center text-sm font-medium leading-6 text-white transition hover:bg-blue-700 focus:outline-none focus:ring",
+            buttonVariants()
+          )}
         >
           View Data Collected
         </Link>
