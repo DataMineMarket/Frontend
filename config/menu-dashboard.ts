@@ -7,7 +7,7 @@ export const menuDashboard = [
     href: "/dashboard",
   },
   {
-    label: "Account",
-    href: "/dashboard/account",
+    label: "My Data Requests",
+    href: "/dashboard/data-requests",
   },
 ]

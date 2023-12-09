@@ -1,6 +1,7 @@
 import "./env.mjs"
 
 import withPWA from "next-pwa"
+import nodeExternals from "webpack-node-externals"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

@@ -103,7 +103,7 @@
     "react-markdown": "^8.0.5",
     "react-table": "^7.8.0",
     "react-wrap-balancer": "^0.3.0",
-    "sharp": "^0.32.5",
+    "sharp": "^0.32.6",
     "siwe": "1.1.6",
     "tailwind-merge": "^1.10.0",
     "tailwindcss": "^3.3.3",
@@ -147,10 +147,13 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
+    "node-loader": "^2.0.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "prettier-plugin-tailwindcss": "^0.2.4",
     "prisma": "^4.11.0",
-    "typescript": "5.0.4"
+    "source-map-loader": "^4.0.1",
+    "typescript": "5.0.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }

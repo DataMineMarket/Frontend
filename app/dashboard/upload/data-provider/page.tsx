@@ -5,7 +5,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useRouter } from "next/router"
-import { FunctionsConsumerAbi } from "@/contracts"
+import { DataListingAbi } from "@/contracts"
 import { turboIntegrations } from "@/data/turbo-integrations"
 import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
 import { env } from "@/env.mjs"
@@ -20,7 +20,6 @@ import {
   useNetwork,
   usePrepareContractWrite,
 } from "wagmi"
-import { set } from "zod"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -72,7 +71,7 @@ export default function DataProviderPage() {
 
   useContractRead({
     address: address,
-    abi: FunctionsConsumerAbi,
+    abi: DataListingAbi,
     functionName: "getTokenKey",
     onSuccess: (data: string) => {
       setTokenKey(data)
@@ -81,7 +80,7 @@ export default function DataProviderPage() {
 
   useContractRead({
     address: address,
-    abi: FunctionsConsumerAbi,
+    abi: DataListingAbi,
     functionName: "getDataKey",
     onSuccess: (data: string) => {
       setDataKey(data)
@@ -102,14 +101,14 @@ export default function DataProviderPage() {
 
   const { config } = usePrepareContractWrite({
     address: address,
-    abi: FunctionsConsumerAbi,
+    abi: DataListingAbi,
     functionName: "provideData",
     args: [
       0, // don hosted secrets - slot ID - empty in this example
       0, // don hosted secrets - version - empty in this example
       args,
       [], // bytesArgs - arguments can be encoded off-chain to bytes.
-      networkConfig[chainId].functionsSubscriptionId!,
+      process.env.NEXT_PUBLIC_SUBSCRIPTION_ID,
       networkConfig[chainId].gasLimit!,
       ethers.utils.formatBytes32String(networkConfig[chainId].functionsDonId!),
     ],
@@ -118,7 +117,7 @@ export default function DataProviderPage() {
 
   useContractEvent({
     address: address,
-    abi: FunctionsConsumerAbi,
+    abi: DataListingAbi,
     eventName: "Response",
     listener(log: any) {
       setDataResponse(log[0].args.response)
@@ -190,7 +189,7 @@ export default function DataProviderPage() {
                 onClick={() => {
                   setTransactionState("pending")
                   console.log("Starting Transaction...")
-                  write!()
+                  write?.()
                 }}
               >
                 Provide Data
