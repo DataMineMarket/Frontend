@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import router from "next/router"
 import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
 import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
-import { ethers, id } from "ethers"
+import { ethers } from "ethers"
 import { motion } from "framer-motion"
 import {
   erc20ABI,
@@ -42,7 +42,7 @@ export default function PageSourceData() {
   const dataListingFactoryAddress =
     contractAddresses[chainId]["DataListingFactory"]
 
-  const [dataSource, setDataSource] = useState("")
+  const [dataSource, setDataSource] = useState("GoogleFit")
   const [numListings, setNumListings] = useState("")
   const [totalPrice, setTotalPrice] = useState("")
   const [totalPriceDisplay, setTotalPriceDisplay] = useState("")
@@ -67,7 +67,9 @@ export default function PageSourceData() {
       isSuccess && setShowSuccessModal(true)
     } catch (error: any) {
       console.error("Error generating keys or writing to contract:", error)
-      setErrorMessage(`Error generating keys or writing to contract:, ${error}`)
+      setErrorMessage(
+        `Error generating keys or writing to contract:, ${error as string}`
+      )
     }
   }
 
@@ -144,7 +146,7 @@ export default function PageSourceData() {
     return secrets
   }
 
-  const toBase64 = (arr: Uint8Array) => btoa(String.fromCodePoint(...arr))
+  const toBase64 = (arr: any) => Buffer.from(arr).toString("base64")
 
   const generateEncryptedSecretsURL = (secrets: Secrets) => {
     fetch("https://data-nexus-simple-server.onrender.com/encrypt-secrets", {
@@ -170,7 +172,7 @@ export default function PageSourceData() {
     functionName: "createDataListing",
     args: [
       router,
-      provideScript,
+      "",
       tokenKey,
       dataKey,
       encryptedSecretsUrls,
@@ -223,6 +225,7 @@ export default function PageSourceData() {
     address: tokenAddress,
     functionName: "allowance",
     args: [userAddress, dataListingFactoryAddress],
+    watch: true,
   })
 
   // Hook to check if the user has approved sufficent USDC for the DataListingFactory contract
@@ -277,7 +280,7 @@ export default function PageSourceData() {
                     alt="Google Fit"
                     className="mr-2 h-4 w-4"
                   />
-                  Google Fit
+                  GoogleFit
                 </option>
                 <option value="spotify" className="flex items-center" disabled>
                   <img
