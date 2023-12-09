@@ -8,7 +8,6 @@ import Link from "next/link"
 import {
   contractAddresses,
   DataListingFactoryAbi,
-  FunctionsConsumerAbi,
 } from "@/contracts"
 import { motion, MotionProps } from "framer-motion"
 import ReactMarkdown from "react-markdown"

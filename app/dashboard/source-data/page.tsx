@@ -3,14 +3,20 @@
 import { btoa } from "buffer"
 import { write } from "fs"
 import { useEffect, useState } from "react"
+import config from "next/config"
 import router from "next/router"
-import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
+import {
+  contractAddresses,
+  DataListingAbi,
+  DataListingFactoryAbi,
+} from "@/contracts"
 import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
 import { ethers } from "ethers"
 import { motion } from "framer-motion"
 import {
   erc20ABI,
   useAccount,
+  useContractEvent,
   useContractRead,
   useContractWrite,
   useNetwork,
@@ -64,6 +70,7 @@ export default function PageSourceData() {
       const secrets = await generateKeys()
       // Assuming the write function is part of the useContractWrite hook
       write?.()
+      console.log("DATA", data)
       isSuccess && setShowSuccessModal(true)
     } catch (error: any) {
       console.error("Error generating keys or writing to contract:", error)
@@ -172,7 +179,7 @@ export default function PageSourceData() {
     functionName: "createDataListing",
     args: [
       router,
-      "",
+      provideScript,
       tokenKey,
       dataKey,
       encryptedSecretsUrls,
@@ -181,13 +188,29 @@ export default function PageSourceData() {
       totalPrice,
       numListings,
     ],
-    // onSuccess(data) {
-    //   setShowSuccessModal(true)
-    // },
-    // onError(error) {
-    //   setErrorMessage(error.message)
-    //   setShowErrorModal(true)
-    // },
+  })
+
+  useContractEvent({
+    address: dataListingFactoryAddress,
+    abi: DataListingFactoryAbi,
+    eventName: "DataListingCreated",
+    listener(log: any) {
+      console.log("Adding Consumer...")
+      fetch("https://data-nexus-simple-server.onrender.com/add-consumer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          consumerAddress: log[0].args.dataListing,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+        })
+        .catch((error) => console.error(error))
+    },
   })
 
   // Calls the create data listing function
