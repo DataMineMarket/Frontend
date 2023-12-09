@@ -1,5 +1,6 @@
 "use client"
 
+import { btoa } from "buffer"
 import { useEffect, useState } from "react"
 import router from "next/router"
 import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
@@ -16,7 +17,7 @@ import { ErrorModal, SuccessModal } from "./modals"
 import { provideScript } from "./provide"
 
 export default function PageSourceData() {
-  const { chain, chains } = useNetwork()
+  const { chain } = useNetwork()
 
   const chainId = chain!.id
   const router = networkConfig[chainId]["functionsRouter"]
@@ -42,11 +43,21 @@ export default function PageSourceData() {
   const [dataKey, setDataKey] = useState<string>("")
   const [encryptedSecretsUrls, setEncryptedSecretsUrls] = useState<string>("")
 
+  // Button handler to create data listing
+  const handleCreateListing = async () => {
+    try {
+      const secrets = await generateKeys()
+      // Assuming the write function is part of the useContractWrite hook
+      write?.()
+    } catch (error) {
+      console.error("Error generating keys or writing to contract:", error)
+    }
+  }
+
   type Secrets = {
     token_key: string
     ipfsAuth: string
   }
-
   const generateKeys = async (): Promise<Secrets> => {
     const tokenKeyPair = await crypto.subtle.generateKey(
       {
@@ -105,6 +116,8 @@ export default function PageSourceData() {
     return secrets
   }
 
+  const toBase64 = (arr: Uint8Array) => btoa(String.fromCodePoint(...arr))
+
   const generateEncryptedSecretsURL = (secrets: Secrets) => {
     fetch("https://data-nexus-simple-server.onrender.com/encrypt-secrets", {
       method: "POST",
@@ -121,6 +134,7 @@ export default function PageSourceData() {
       })
       .catch((error) => console.error(error))
   }
+
   // Write hook to create data listing
   const { config } = usePrepareContractWrite({
     address: dataListingFactoryAddress,
@@ -146,7 +160,8 @@ export default function PageSourceData() {
     },
   })
 
-  // const { data, isLoading, isSuccess, write } = useContractWrite(config)
+  // Calls the create data listing function
+  const { data, isLoading, isSuccess, write } = useContractWrite(config)
 
   return (
     <motion.div
@@ -186,7 +201,6 @@ export default function PageSourceData() {
                 value={dataSource}
               >
                 <option value="google-fit" className="flex items-center">
-                  {/* Inline SVG or component for Google Fit logo */}
                   <img
                     src="path-to-google-fit-logo"
                     alt="Google Fit"
@@ -195,7 +209,6 @@ export default function PageSourceData() {
                   Google Fit
                 </option>
                 <option value="spotify" className="flex items-center" disabled>
-                  {/* Inline SVG or component for Spotify logo */}
                   <img
                     src="path-to-spotify-logo"
                     alt="Spotify"
@@ -241,8 +254,8 @@ export default function PageSourceData() {
             </div>
             <div className="mb-4">
               <button
-                // disabled={!write}
-                // onClick={() => write?.()}
+                disabled={!write}
+                onClick={handleCreateListing}
                 type="submit"
                 className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
               >
@@ -269,9 +282,3 @@ export default function PageSourceData() {
     </motion.div>
   )
 }
-
-// TODO
-// 1. Check if the parameters are correct
-// 2. Obtain the parameters
-// 3. Test creation of data listing
-// 4. Better Styling / Error handling
