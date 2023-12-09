@@ -1,13 +1,21 @@
 "use client"
 
 import { btoa } from "buffer"
+import { write } from "fs"
 import { useEffect, useState } from "react"
 import router from "next/router"
 import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
 import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
-import { ethers } from "ethers"
+import { ethers, id } from "ethers"
 import { motion } from "framer-motion"
-import { useContractWrite, useNetwork, usePrepareContractWrite } from "wagmi"
+import {
+  erc20ABI,
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from "wagmi"
 
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/config/design"
 import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
@@ -18,10 +26,11 @@ import { provideScript } from "./provide"
 
 export default function PageSourceData() {
   const { chain } = useNetwork()
+  const userAddress = useAccount().address as `0x${string}`
 
   const chainId = chain!.id
   const router = networkConfig[chainId]["functionsRouter"]
-  const tokenAddress = "0x52D800ca262522580CeBAD275395ca6e7598C014"
+  const tokenAddress = "0x52D800ca262522580CeBAD275395ca6e7598C014" // USDC
 
   // Throws error if chain id is not in contract addresses
   if (!contractAddresses[chainId]) {
@@ -36,21 +45,40 @@ export default function PageSourceData() {
   const [dataSource, setDataSource] = useState("")
   const [numListings, setNumListings] = useState("")
   const [totalPrice, setTotalPrice] = useState("")
+  const [totalPriceDisplay, setTotalPriceDisplay] = useState("")
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false)
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>("")
   const [tokenKey, setTokenKey] = useState<string>("")
   const [dataKey, setDataKey] = useState<string>("")
   const [encryptedSecretsUrls, setEncryptedSecretsUrls] = useState<string>("")
+  const [allowanceIsSufficient, setAllowanceIsSufficient] =
+    useState<boolean>(false)
 
   // Button handler to create data listing
-  const handleCreateListing = async () => {
+  const handleCreateListing = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault() // Prevent form submission
     try {
       const secrets = await generateKeys()
       // Assuming the write function is part of the useContractWrite hook
       write?.()
-    } catch (error) {
+      isSuccess && setShowSuccessModal(true)
+    } catch (error: any) {
       console.error("Error generating keys or writing to contract:", error)
+      setErrorMessage(`Error generating keys or writing to contract:, ${error}`)
+    }
+  }
+
+  // Button handler to approve USDC
+  const handleApprove = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault() // Prevent form submission
+    try {
+      // Assuming the write function is part of the useContractWrite hook
+      approvalWrite?.()
+    } catch (error) {
+      console.error("Error approving USDC:", error)
     }
   }
 
@@ -148,20 +176,63 @@ export default function PageSourceData() {
       encryptedSecretsUrls,
       dataSource,
       tokenAddress,
-      numListings,
       totalPrice,
+      numListings,
     ],
-    onSuccess(data) {
-      setShowSuccessModal(true)
-    },
-    onError(error) {
-      setErrorMessage(error.message)
-      setShowErrorModal(true)
-    },
+    // onSuccess(data) {
+    //   setShowSuccessModal(true)
+    // },
+    // onError(error) {
+    //   setErrorMessage(error.message)
+    //   setShowErrorModal(true)
+    // },
   })
 
   // Calls the create data listing function
   const { data, isLoading, isSuccess, write } = useContractWrite(config)
+
+  // Approval hook to approve USDC
+  const { config: approvalConfig } = usePrepareContractWrite({
+    address: tokenAddress,
+    abi: erc20ABI,
+    functionName: "approve",
+    args: [dataListingFactoryAddress, BigInt(totalPrice)],
+    onSuccess(data) {
+      console.log("Approval successful")
+    },
+    onError(error) {
+      console.error("Approval failed")
+    },
+  })
+
+  // Calls the approval function
+  const {
+    data: approvalData,
+    isLoading: approvalIsLoading,
+    isSuccess: approvalIsSuccess,
+    write: approvalWrite,
+  } = useContractWrite(approvalConfig)
+
+  function formatPrice(price: string): string {
+    return ethers.utils.parseUnits(price, 6).toString()
+  }
+
+  // Hook to check if the user has approved USDC for the DataListingFactory contract
+  const { data: allowance, isLoading: allowanceIsLoading } = useContractRead({
+    abi: erc20ABI,
+    address: tokenAddress,
+    functionName: "allowance",
+    args: [userAddress, dataListingFactoryAddress],
+  })
+
+  // Hook to check if the user has approved sufficent USDC for the DataListingFactory contract
+  useEffect(() => {
+    if (allowance && totalPrice) {
+      setAllowanceIsSufficient(allowance >= BigInt(totalPrice))
+    } else {
+      setAllowanceIsSufficient(false)
+    }
+  }, [allowance, totalPrice])
 
   return (
     <motion.div
@@ -241,26 +312,38 @@ export default function PageSourceData() {
                 htmlFor="total-price"
                 className="block text-sm font-medium text-gray-700"
               >
-                Total price in WETH
+                Total price in USDC
               </label>
               <input
                 id="total-price"
                 type="text"
-                placeholder="Total price in WETH"
+                placeholder="Total price in USDC"
                 className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                onChange={(e) => setTotalPrice(e.target.value)}
-                value={totalPrice}
+                onChange={(e) => {
+                  setTotalPriceDisplay(e.target.value)
+                  setTotalPrice(formatPrice(e.target.value))
+                }}
+                value={totalPriceDisplay}
               />
             </div>
             <div className="mb-4">
-              <button
-                disabled={!write}
-                onClick={handleCreateListing}
-                type="submit"
-                className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
-              >
-                Create Data Listing
-              </button>
+              {!allowanceIsSufficient ? (
+                <button
+                  onClick={handleApprove}
+                  type="button"
+                  className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
+                >
+                  Approve USDC
+                </button>
+              ) : (
+                <button
+                  onClick={handleCreateListing}
+                  type="button"
+                  className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
+                >
+                  Create Data Listing
+                </button>
+              )}
             </div>
           </form>
         </div>
