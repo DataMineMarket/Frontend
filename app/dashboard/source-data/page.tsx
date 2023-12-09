@@ -1,7 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import router from "next/router"
 import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
+import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
+import { ethers } from "ethers"
 import { motion } from "framer-motion"
 import { useContractWrite, useNetwork, usePrepareContractWrite } from "wagmi"
 
@@ -10,10 +13,15 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 
 import { ErrorModal, SuccessModal } from "./modals"
+import { provideScript } from "./provide"
 
 export default function PageSourceData() {
   const { chain, chains } = useNetwork()
+
   const chainId = chain!.id
+  const router = networkConfig[chainId]["functionsRouter"]
+  const tokenAddress = "0x52D800ca262522580CeBAD275395ca6e7598C014"
+
   // Throws error if chain id is not in contract addresses
   if (!contractAddresses[chainId]) {
     throw new Error(
@@ -30,26 +38,104 @@ export default function PageSourceData() {
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false)
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>("")
+  const [tokenKey, setTokenKey] = useState<string>("")
+  const [dataKey, setDataKey] = useState<string>("")
+  const [encryptedSecretsUrls, setEncryptedSecretsUrls] = useState<string>("")
 
+  type Secrets = {
+    token_key: string
+    ipfsAuth: string
+  }
+
+  const generateKeys = async (): Promise<Secrets> => {
+    const tokenKeyPair = await crypto.subtle.generateKey(
+      {
+        name: "RSA-OAEP",
+        modulusLength: 4096,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-256",
+      },
+      true,
+      ["encrypt", "decrypt"]
+    )
+    const exportedTokenPublicKey = await crypto.subtle.exportKey(
+      "spki",
+      tokenKeyPair.publicKey
+    )
+    const exportedTokenPrivateKey = await crypto.subtle.exportKey(
+      "pkcs8",
+      tokenKeyPair.privateKey
+    )
+
+    const tokenPubKey = toBase64(new Uint8Array(exportedTokenPublicKey))
+    const tokenPrivKey = toBase64(new Uint8Array(exportedTokenPrivateKey))
+
+    const dataKeyPair = await crypto.subtle.generateKey(
+      {
+        name: "RSA-OAEP",
+        modulusLength: 4096,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-256",
+      },
+      true,
+      ["encrypt", "decrypt"]
+    )
+    const exportedDataPublicKey = await crypto.subtle.exportKey(
+      "spki",
+      dataKeyPair.publicKey
+    )
+    const exportedDataPrivateKey = await crypto.subtle.exportKey(
+      "pkcs8",
+      dataKeyPair.privateKey
+    )
+
+    const dataPubKey = toBase64(new Uint8Array(exportedDataPublicKey))
+    const dataPrivKey = toBase64(new Uint8Array(exportedDataPrivateKey))
+
+    setDataKey(dataPubKey)
+
+    const secrets = {
+      token_key: tokenPrivKey,
+      ipfsAuth: process.env.NEXT_PUBLIC_NFT_STORAGE_API_TOKEN!,
+    }
+
+    setTokenKey(tokenPubKey)
+    generateEncryptedSecretsURL(secrets)
+
+    return secrets
+  }
+
+  const generateEncryptedSecretsURL = (secrets: Secrets) => {
+    fetch("https://data-nexus-simple-server.onrender.com/encrypt-secrets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        secrets: secrets,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setEncryptedSecretsUrls(data.encryptedSecretsUrls)
+      })
+      .catch((error) => console.error(error))
+  }
   // Write hook to create data listing
   const { config } = usePrepareContractWrite({
     address: dataListingFactoryAddress,
     abi: DataListingFactoryAbi,
     functionName: "createDataListing",
     args: [
-      // router,
-      // provideScript,
-      // tokenKey,
-      // dataKey,
-      // encryptedSecretsUrls,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "googleFit",
-      // numListings,
-      // totalPrice
+      router,
+      provideScript,
+      tokenKey,
+      dataKey,
+      encryptedSecretsUrls,
+      dataSource,
+      tokenAddress,
+      numListings,
+      totalPrice,
     ],
     onSuccess(data) {
       setShowSuccessModal(true)
@@ -60,7 +146,7 @@ export default function PageSourceData() {
     },
   })
 
-  const { data, isLoading, isSuccess, write } = useContractWrite(config)
+  // const { data, isLoading, isSuccess, write } = useContractWrite(config)
 
   return (
     <motion.div
@@ -155,8 +241,8 @@ export default function PageSourceData() {
             </div>
             <div className="mb-4">
               <button
-                disabled={!write}
-                onClick={() => write?.()}
+                // disabled={!write}
+                // onClick={() => write?.()}
                 type="submit"
                 className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
               >
