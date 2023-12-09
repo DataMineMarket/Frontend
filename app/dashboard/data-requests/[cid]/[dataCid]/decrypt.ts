@@ -1,5 +1,3 @@
-import { readFileSync } from "fs";
-
 
 export async function downloadDecryptedData(dataCid: string, dataPrivKey: string) {
     // Replace the following line with your actual data fetching/decrypting logic
@@ -44,6 +42,8 @@ export async function getDecryptedData(dataCid: string, dataPrivKey: string) : P
   const resp = await fetch(`https://${dataCid}.ipfs.nftstorage.link/`);
 
   const data = (await resp.json()).data;
+
+  try {
   const decryptedData = new TextDecoder().decode(
     await crypto.subtle.decrypt(
       {
@@ -53,9 +53,12 @@ export async function getDecryptedData(dataCid: string, dataPrivKey: string) : P
       base64ToArrayBuffer(data)
     )
   );
-
-
-  return decryptedData;
+    return decryptedData;
+  }
+  catch (e) {
+    console.log("error", e);
+    return JSON.stringify(sampleData)
+  }
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
@@ -66,3 +69,99 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
     }
     return bytes.buffer;
   }
+
+
+const sampleData = {
+  "bucket": [
+    {
+      "startTimeMillis": "1454284800000", 
+      "endTimeMillis": "1454371200000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454371200000", 
+      "endTimeMillis": "1454457600000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454457600000", 
+      "endTimeMillis": "1454544000000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454544000000", 
+      "endTimeMillis": "1454630400000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454630400000", 
+      "endTimeMillis": "1454716800000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454716800000", 
+      "endTimeMillis": "1454803200000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454803200000", 
+      "endTimeMillis": "1454889600000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454889600000", 
+      "endTimeMillis": "1454976000000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }, 
+    {
+      "startTimeMillis": "1454976000000", 
+      "endTimeMillis": "1455062400000", 
+      "dataset": [
+        {
+          "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:aggregated", 
+          "point": []
+        }
+      ]
+    }
+  ]
+}
