@@ -2,191 +2,158 @@
 
 "use client"
 
-import Image from "next/image"
+import { title } from "process"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { turboIntegrations } from "@/data/turbo-integrations"
+import {
+  contractAddresses,
+  DataListingFactoryAbi,
+} from "@/contracts"
 import { motion, MotionProps } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import Balancer from "react-wrap-balancer"
+import { useContractRead, useNetwork } from "wagmi"
 
-import { DEPLOY_URL } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { fadeUpVariant } from "@/lib/utils/motion"
 import { buttonVariants } from "@/components/ui/button"
-import { WalletAddress } from "@/components/blockchain/wallet-address"
-import { WalletConnect } from "@/components/blockchain/wallet-connect"
 import { PageSectionGrid } from "@/components/layout/page-section"
-import { IsDarkTheme } from "@/components/shared/is-dark-theme"
-import { IsLightTheme } from "@/components/shared/is-light-theme"
-import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
-import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
-import { LightDarkImage } from "@/components/shared/light-dark-image"
-import { ERC721TokenUriImage, ERC721TokenUriName } from "@/integrations/erc721"
-import { ButtonSIWELogin } from "@/integrations/siwe/components/button-siwe-login"
-import { ButtonSIWELogout } from "@/integrations/siwe/components/button-siwe-logout"
-import { IsSignedIn } from "@/integrations/siwe/components/is-signed-in"
-import { IsSignedOut } from "@/integrations/siwe/components/is-signed-out"
 
-const integrations = [
-  {
-    title: "Google Fit",
-    description: "Upload your personal health data from Google Fit.",
-    href: "/dashboard/upload/google-fit",
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <IsLightTheme>
-          <Image
-            alt="Google Fit Logo"
-            height={100}
-            src="/integrations/fit-icon.svg"
-            width={100}
-          />
-        </IsLightTheme>
-        <IsDarkTheme>
-          <Image
-            alt="Google Fit Logo"
-            height={100}
-            src="/integrations/fit-icon.svg"
-            width={100}
-          />
-        </IsDarkTheme>
-      </div>
-    ),
-  },
-  {
-    title: "Spotify",
-    description: "Upload your personal health data from Spotify.",
-    href: "/dashboard/upload/google-fit",
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <IsLightTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/spotify-icon.svg"
-            width={100}
-          />
-        </IsLightTheme>
-        <IsDarkTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/spotify-icon.svg"
-            width={100}
-          />
-        </IsDarkTheme>
-      </div>
-    ),
-  },
-  {
-    title: "Plaid",
-    description: "Upload your personal financial from Paid.",
-    href: "/dashboard/upload/google-fit",
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <IsLightTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/plaid-icon.png"
-            width={100}
-          />
-        </IsLightTheme>
-        <IsDarkTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/plaid-icon.png"
-            width={100}
-          />
-        </IsDarkTheme>
-      </div>
-    ),
-  },
-  {
-    title: "Strava",
-    description: "Upload your personal running from Strava.",
-    href: "/dashboard/upload/google-fit",
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <IsLightTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/strava.png"
-            width={100}
-          />
-        </IsLightTheme>
-        <IsDarkTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/strava.png"
-            width={100}
-          />
-        </IsDarkTheme>
-      </div>
-    ),
-  },
-  {
-    title: "My Fitness Pal",
-    description: "Upload your personal fitness data from My Fitness Pal.",
-    href: "/dashboard/upload/google-fit",
-    demo: (
-      <div className="flex items-center justify-center space-x-20">
-        <IsLightTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/mfp.png"
-            width={100}
-          />
-        </IsLightTheme>
-        <IsDarkTheme>
-          <Image
-            alt="Spotify"
-            height={100}
-            src="/integrations/mfp.png"
-            width={100}
-          />
-        </IsDarkTheme>
-      </div>
-    ),
-  },
-]
+import { Integration, integrations } from "./templates/integrations-templates"
 
 interface Web2IntegrationsProps extends MotionProps {
   className?: string
+}
+
+function generateIntegrations(
+  addresses: string[],
+  sources: string[]
+): Integration[] {
+  const sourceToTitleMap: { [key: string]: string } = {
+    GoogleFit: "Google Fit",
+    Spotify: "Spotify",
+    Plaid: "Plaid",
+    Strava: "Strava",
+    MyFitnessPal: "My Fitness Pal",
+  }
+
+  const generatedIntegrations: Integration[] = []
+
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i]
+    const address = addresses[i]
+    const title = sourceToTitleMap[source]
+
+    const integration = integrations.find((int) => int.title === title)
+    if (integration) {
+      generatedIntegrations.push({ ...integration, contractAddress: address })
+    }
+  }
+
+  return generatedIntegrations
 }
 
 export function Web2Integrations({
   className,
   ...props
 }: Web2IntegrationsProps) {
+  const { chain } = useNetwork()
+  const chainId = chain!.id
+
+  // Throws error if chain id is not in contract addresses
+  if (!contractAddresses[chainId]) {
+    throw new Error(
+      `Chain ID ${chainId} is not supported by the DataListingFactory contract` +
+        `Supported chains: ${Object.keys(contractAddresses).join(", ")}`
+    )
+  }
+  const dataListingFactoryAddress =
+    contractAddresses[chainId]["DataListingFactory"]
+
+  const [listingAddresses, setListingAddresses] = useState<string[]>()
+  const [dataSources, setDataSources] = useState<string[]>()
+  const [generatedIntegrations, setGeneratedIntegrations] =
+    useState<Integration[]>()
+
+  useContractRead({
+    address: dataListingFactoryAddress,
+    abi: DataListingFactoryAbi,
+    functionName: "getDataListings",
+    watch: true,
+    onSuccess: (data: string[]) => {
+      setListingAddresses(data)
+    },
+  })
+
+  useContractRead({
+    address: dataListingFactoryAddress,
+    abi: DataListingFactoryAbi,
+    functionName: "getDataListingSources",
+    watch: true,
+    onSuccess: (data: string[]) => {
+      console.log("Data Sources", data)
+      setDataSources(data)
+    },
+  })
+
+  useEffect(() => {
+    if (listingAddresses && dataSources) {
+      setGeneratedIntegrations(
+        generateIntegrations(listingAddresses, dataSources)
+      )
+    }
+  }, [listingAddresses, dataSources])
+
   return (
-    <PageSectionGrid className={className} {...props}>
-      {integrations.map(({ title, description, href, demo }) => (
-        <DemoCard
-          key={title}
-          title={title}
-          description={description}
-          href={href}
-          demo={demo}
-        />
-      ))}
-    </PageSectionGrid>
+    <div>
+      {generatedIntegrations ? (
+        <PageSectionGrid className={className} {...props}>
+          {generatedIntegrations.map(
+            ({ contractAddress, title, description, href, demo }) => (
+              <DemoCard
+                key={contractAddress}
+                title={title}
+                contractAddress={contractAddress!}
+                description={description}
+                href={href}
+                demo={demo}
+              />
+            )
+          )}
+        </PageSectionGrid>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          No DataListings Found
+        </div>
+      )}
+    </div>
   )
 }
 
 interface DemoCardProps extends MotionProps {
   demo: React.ReactNode
   title: string
+  contractAddress: string
   description: string
   large?: boolean
   href?: string
 }
 
-function DemoCard({ title, description, href, demo, large }: DemoCardProps) {
+function DemoCard({
+  title,
+  contractAddress,
+  description,
+  href,
+  demo,
+  large,
+}: DemoCardProps) {
   return (
     <motion.div
       variants={fadeUpVariant()}
@@ -225,7 +192,10 @@ function DemoCard({ title, description, href, demo, large }: DemoCardProps) {
           </Balancer>
         </div>
         {!href ? null : (
-          <Link href={href} className={cn(buttonVariants(), "my-4")}>
+          <Link
+            href={`${href}&address=${contractAddress}`}
+            className={cn(buttonVariants(), "my-4")}
+          >
             Upload Data
           </Link>
         )}

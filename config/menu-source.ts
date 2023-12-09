@@ -1,9 +1,9 @@
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // Menu Admin
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-export const menuAdmin = [
+export const menuSourceData = [
   {
-    label: "Users",
-    href: "/dashboard/admin",
+    label: "Create Data Request",
+    href: "/dashboard/source-data",
   },
 ]

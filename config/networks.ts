@@ -5,6 +5,7 @@ import { env } from "@/env.mjs"
 import { Chain, ChainProviderFn, configureChains } from "wagmi"
 import {
   goerli as goerliNoIcon,
+  polygonMumbai,
   mainnet,
 } from "wagmi/chains"
 import { alchemyProvider } from "wagmi/providers/alchemy"
@@ -16,7 +17,12 @@ const goerli = {
   iconUrl: "/icons/NetworkEthereumTest.svg",
 }
 
-export const ETH_CHAINS_TEST = [goerli]
+const mumbai = {
+  ...polygonMumbai,
+  iconUrl: "/icons/NetworkPolygonTest.svg",
+}
+
+export const ETH_CHAINS_TEST = [goerli, mumbai]
 
 export const ETH_CHAINS_PROD = [mainnet]
 export const ETH_CHAINS_DEV =

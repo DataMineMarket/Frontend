@@ -25,10 +25,10 @@ export const siteConfig: SiteConfig = {
     "Democratising Data Acquisition and Ownership.",
   localeDefault: "en",
   links: {
-    docs: "https://github.com/DataMineMarket/DataNexusContracts/",
-    discord: "https://discord.gg/U4jy7Xfh76",
-    twitter: "https://twitter.com/district_labs",
-    github: "https://github.com/DataMineMarket/Frontend",
+    docs: "https://github.com/DataNexusMarket/DataNexusContracts/",
+    discord: "",
+    twitter: "",
+    github: "https://github.com/DataNexusMarket",
   },
 }
 

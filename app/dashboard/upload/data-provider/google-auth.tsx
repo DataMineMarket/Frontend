@@ -4,15 +4,12 @@ import axios, { AxiosResponse } from "axios"
 const REDIRECT_URI =
   process.env.NODE_ENV === "production"
     ? env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL?.toString() ??
-      "http://localhost:3000/dashboard/upload/google-fit"
-    : "http://localhost:3000/dashboard/upload/google-fit"
+      "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
+    : "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
 // const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.toString() ?? ""
-const CLIENT_ID = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.toString() ?? ""
-const CLIENT_SECRET = env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET?.toString() ?? ""
-
-console.log("Client ID: ", CLIENT_ID)
-console.log("ENV: ", process.env)
-
+const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.toString() ?? ""
+const CLIENT_SECRET =
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET?.toString() ?? ""
 type OAuthTokenResponse = {
   access_token: string
   scope: string

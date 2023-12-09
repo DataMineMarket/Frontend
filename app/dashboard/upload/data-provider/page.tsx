@@ -1,12 +1,25 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { GetServerSideProps, GetServerSidePropsContext } from "next"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useRouter } from "next/router"
+import { DataListingAbi } from "@/contracts"
 import { turboIntegrations } from "@/data/turbo-integrations"
+import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
+import { env } from "@/env.mjs"
+import { ethers } from "ethers"
 import { LuBook } from "react-icons/lu"
-import { set } from "zod"
+import { data } from "tailwindcss/defaultTheme"
+import {
+  Address,
+  useContractEvent,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+} from "wagmi"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -23,10 +36,99 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 
-import { exchangeCodeForTokens, googleAuthUrl } from "./auth"
+import { integrationDescriptions } from "../templates/integrations-templates"
+import { prepareArgs } from "./functions-handler"
+import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
 
-export default function GoogleFitPage() {
+// import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
+
+export default function DataProviderPage() {
   const [isConnectedModal, setIsConnectedModal] = useState(false)
+  const [authToken, setAuthToken] = useState("")
+  const [address, setAddress] = useState<Address>()
+  const [tokenKey, setTokenKey] = useState("")
+  const [dataKey, setDataKey] = useState("")
+  const [args, setArgs] = useState<string[]>()
+  const [dataResponse, setDataResponse] = useState<string>("")
+  const [transactionState, setTransactionState] = useState("")
+
+  const { chain } = useNetwork()
+  const chainId = chain!.id
+  const searchParams = useSearchParams()
+  const dataSource: string = searchParams.get("source") || "Google"
+  const queryAddress = searchParams.get("address")
+  const integrationDescription = integrationDescriptions[dataSource]
+
+  useEffect(() => {
+    if (queryAddress) {
+      sessionStorage.setItem("address", queryAddress)
+      setAddress(queryAddress as Address)
+    } else {
+      const storedAddress = sessionStorage.getItem("address") || ""
+      setAddress(storedAddress as Address)
+    }
+  }, [queryAddress])
+
+  useContractRead({
+    address: address,
+    abi: DataListingAbi,
+    functionName: "getTokenKey",
+    onSuccess: (data: string) => {
+      setTokenKey(data)
+    },
+  })
+
+  useContractRead({
+    address: address,
+    abi: DataListingAbi,
+    functionName: "getDataKey",
+    onSuccess: (data: string) => {
+      setDataKey(data)
+    },
+  })
+
+  useEffect(() => {
+    if (authToken && dataKey && tokenKey) {
+      prepareArgs(authToken, dataKey, tokenKey)
+        .then((args) => {
+          setArgs(args)
+        })
+        .catch((error) => {
+          console.error("Error: ", error)
+        })
+    }
+  }, [authToken, dataKey, tokenKey])
+
+  const { config } = usePrepareContractWrite({
+    address: address,
+    abi: DataListingAbi,
+    functionName: "provideData",
+    args: [
+      0, // don hosted secrets - slot ID - empty in this example
+      0, // don hosted secrets - version - empty in this example
+      args,
+      [], // bytesArgs - arguments can be encoded off-chain to bytes.
+      process.env.NEXT_PUBLIC_SUBSCRIPTION_ID,
+      networkConfig[chainId].gasLimit!,
+      ethers.utils.formatBytes32String(networkConfig[chainId].functionsDonId!),
+    ],
+  })
+  const { data, isLoading, isSuccess, write } = useContractWrite(config)
+
+  useContractEvent({
+    address: address,
+    abi: DataListingAbi,
+    eventName: "Response",
+    listener(log: any) {
+      setDataResponse(log[0].args.response)
+      if (log[0].args.response === "0x") {
+        setTransactionState("failed")
+        console.log("failed log: ", log)
+      } else {
+        setTransactionState("success")
+      }
+    },
+  })
 
   // Redirect to Google Authentication URL
   const connectGoogleFit = () => {
@@ -35,6 +137,7 @@ export default function GoogleFitPage() {
   // Parse authorization code from URL when user is redirected back to the application
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code")
+    setAddress(sessionStorage.getItem("address") as Address)
 
     if (code) {
       setIsConnectedModal(true)
@@ -42,20 +145,17 @@ export default function GoogleFitPage() {
       // Get access token and a refresh token
       exchangeCodeForTokens(code)
         .then((response) => {
-          console.log("Tokens: ", response.data.access_token) // This will log the access and refresh tokens
+          setAuthToken(response.data.access_token)
         })
         .catch((error) => {
           console.error("Error: ", error)
         })
 
-      // Send the tokens to chainlink functions
-      console.log("Code: ", code)
-
       // Redirect to page without code in URL
       window.history.replaceState(
         {},
         document.title,
-        "/dashboard/upload/google-fit"
+        "/dashboard/upload/data-provider"
       )
     }
   }, [])
@@ -63,20 +163,14 @@ export default function GoogleFitPage() {
   return (
     <div className="container relative mt-10">
       <PageHeader className="pb-8">
-        <LightDarkImage
-          LightImage={turboIntegrations.googleFit.imgDark}
-          DarkImage={turboIntegrations.googleFit.imgLight}
-          alt="Google Fit Logo"
-          width={100}
-          height={100}
-        />
+        {integrationDescription.image}
         <PageHeaderHeading>Fit</PageHeaderHeading>
         <PageHeaderDescription>
-          Upload your personal health data from Google Fit to earn tokens.
+          {integrationDescription.description}
         </PageHeaderDescription>
         <PageHeaderCTA>
           <Link
-            href={turboIntegrations.googleFit.url}
+            href={integrationDescription.url}
             target="_blank"
             rel="noreferrer noopener"
             className={cn(buttonVariants({ variant: "outline" }))}
@@ -87,47 +181,49 @@ export default function GoogleFitPage() {
         </PageHeaderCTA>
       </PageHeader>
       <PageSection>
+        {!authToken ? null : (
+          <div>
+            {transactionState == "" ? (
+              <button
+                className="rounded border border-blue-700 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                onClick={() => {
+                  setTransactionState("pending")
+                  console.log("Starting Transaction...")
+                  write?.()
+                }}
+              >
+                Provide Data
+              </button>
+            ) : (
+              <div>
+                {transactionState == "pending" ? (
+                  <b className="text-2xl">Data Uploading Pending...</b>
+                ) : (
+                  <b className="text-2xl">🎉 Data Upload Succesfull! 🎉</b>
+                )}
+              </div>
+            )}
+          </div>
+        )}
         <Tabs defaultValue="upload data" className="w-full max-w-4xl">
-          <TabsList className="grid w-full grid-cols-1">
-            <TabsTrigger value="upload data">Upload Data</TabsTrigger>
-          </TabsList>
           <TabsContent value="upload data" className="mt-6">
             <IsWalletConnected>
-              <div className="my-4">
-                <p>
-                  By clicking &apos;Upload&apos;, you&apos;ll be directed to our
-                  secure API integration portal, where you can upload your
-                  Google Fit data.
-                </p>
-                <p className="mb-4 text-gray-600">
-                  You&apos;ll be asked to grant us the following permissions:
-                </p>
-                <ul className="list-inside list-disc text-gray-600">
-                  <li className="mb-1">
-                    View your Google Fit data: This allows us to fetch the
-                    necessary fitness data for your profile.
-                  </li>
-                  <li className="mb-1">
-                    Upload Google Fit data: This allows us to upload fitness
-                    data to your Google Fit account, if you choose to sync data
-                    from our app.
-                  </li>
-                  <li className="mb-1">
-                    Manage your Google Fit data: This allows us to update or
-                    delete fitness data, ensuring your data in our app stays in
-                    sync with Google Fit.
-                  </li>
-                </ul>
-              </div>
+              {integrationDescription.disclaimer}
               <div>
-                <div className="flex justify-center">
-                  <button
-                    className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-                    onClick={connectGoogleFit}
-                  >
-                    Connect to Google Fit To Upload Data
-                  </button>
-                </div>
+                {authToken ? (
+                  <div className="flex justify-center text-xl">
+                    {integrationDescription.title} Account Connected ✅
+                  </div>
+                ) : (
+                  <div className="flex justify-center">
+                    <button
+                      className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                      onClick={connectGoogleFit}
+                    >
+                      Connect to {integrationDescription.title} To Upload Data
+                    </button>
+                  </div>
+                )}
 
                 {isConnectedModal && (
                   <div
@@ -152,11 +248,12 @@ export default function GoogleFitPage() {
                                 className="text-lg font-medium leading-6 text-gray-900"
                                 id="modal-title"
                               >
-                                Google Fit Connection
+                                {integrationDescription.title} Connection
                               </h3>
                               <div className="mt-2">
                                 <p className="text-sm text-gray-500">
-                                  Connection to Google Fit was successful.
+                                  Connection to {integrationDescription.title}{" "}
+                                  was successful.
                                 </p>
                               </div>
                             </div>
