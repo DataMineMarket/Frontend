@@ -1,9 +1,10 @@
 import { readFileSync } from "fs";
 
 
-export async function downloadDecryptedData(dataCid: string) {
+export async function downloadDecryptedData(dataCid: string, dataPrivKey: string) {
     // Replace the following line with your actual data fetching/decrypting logic
-    const decryptedData = await getDecryptedData(dataCid);
+    const decryptedData = await getDecryptedData(dataCid, dataPrivKey);
+
 
     // Create a blob from your data
     const blob = new Blob([decryptedData], { type: 'text/plain' });
@@ -27,8 +28,7 @@ export async function downloadDecryptedData(dataCid: string) {
     link.parentNode.removeChild(link);
   };
 
-export async function getDecryptedData(dataCid: string) : Promise<string> {
-  const dataPrivKey= readFileSync("./dataKey.txt", "utf-8");
+export async function getDecryptedData(dataCid: string, dataPrivKey: string) : Promise<string> {
   const encodedDataKey = base64ToArrayBuffer(dataPrivKey);
   const importedDataKey = await crypto.subtle.importKey(
     "pkcs8",
@@ -41,8 +41,8 @@ export async function getDecryptedData(dataCid: string) : Promise<string> {
     ["decrypt"]
   );
 
-
   const resp = await fetch(`https://${dataCid}.ipfs.nftstorage.link/`);
+
   const data = (await resp.json()).data;
   const decryptedData = new TextDecoder().decode(
     await crypto.subtle.decrypt(
@@ -54,28 +54,9 @@ export async function getDecryptedData(dataCid: string) : Promise<string> {
     )
   );
 
+
   return decryptedData;
 }
-
-const fromBase64 = (str: string) =>
-    new Uint8Array(
-        atob(str)
-            .split("")
-            .map((c) => c.charCodeAt(0))
-    )
-
-
-function arrayBufferToBase64(buffer: ArrayBuffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-}
-
-const toBase64 = (arr: Uint8Array) => btoa(String.fromCodePoint(...arr))
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
     const binaryString = atob(base64);
