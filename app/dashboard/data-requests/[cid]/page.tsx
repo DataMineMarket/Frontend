@@ -28,7 +28,7 @@ export default function PageData() {
     | undefined
   const [dataCid, setDataCid] = useState<string[]>([])
 
-  // Hook to get all the data fuffilled for a given data listing contract
+  // Hook to get all the data fulfillled for a given data listing contract
   useContractRead({
     address: formattedCid,
     abi: FunctionsConsumerAbi,

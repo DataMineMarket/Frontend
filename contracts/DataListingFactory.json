@@ -1,232 +1,113 @@
 [
   {
+    "type": "event",
     "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dataListing",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "string",
-        "name": "dataSource",
-        "type": "string"
-      }
-    ],
     "name": "DataListingCreated",
-    "type": "event"
+    "inputs": [
+      { "type": "address", "name": "dataListing", "indexed": true },
+      { "type": "string", "name": "dataSource", "indexed": true }
+    ]
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "contractOwners",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [
+      { "type": "address", "name": "" },
+      { "type": "uint256", "name": "" }
+    ],
+    "outputs": [{ "type": "address", "name": "" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "router",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "provideScript",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "tokenKey",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "dataKey",
-        "type": "string"
-      },
-      {
-        "internalType": "bytes",
-        "name": "encryptedSecretsUrls",
-        "type": "bytes"
-      },
-      {
-        "internalType": "string",
-        "name": "dataSource",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "initialBalance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "dataPointQuantity",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "createDataListing",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      { "type": "address", "name": "router" },
+      { "type": "string", "name": "provideScript" },
+      { "type": "string", "name": "tokenKey" },
+      { "type": "string", "name": "dataKey" },
+      { "type": "bytes", "name": "encryptedSecretsUrls" },
+      { "type": "string", "name": "dataSource" },
+      { "type": "address", "name": "tokenAddress" },
+      { "type": "uint256", "name": "initialBalance" },
+      { "type": "uint256", "name": "dataPointQuantity" }
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "outputs": [{ "type": "address", "name": "" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "getDataListing",
-    "outputs": [
-      {
-        "internalType": "contract DataListing",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [{ "type": "uint256", "name": "index" }],
+    "outputs": [{ "type": "address", "name": "" }]
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "getDataListingSources",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string[]", "name": "" }]
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "getDataListings",
-    "outputs": [
-      {
-        "internalType": "contract DataListing[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address[]", "name": "" }]
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "getLastDataListing",
-    "outputs": [
-      {
-        "internalType": "contract DataListing",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
+    "payable": false,
     "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
     "name": "getNumberOfs_dataListingContracts",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
+    "type": "function",
     "name": "getOwnerListings",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [{ "type": "address", "name": "owner" }],
+    "outputs": [{ "type": "address[]", "name": "" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "s_dataListingContracts",
-    "outputs": [
-      {
-        "internalType": "contract DataListing",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [{ "type": "uint256", "name": "" }],
+    "outputs": [{ "type": "address", "name": "" }]
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "s_dataListingSources",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
+    "constant": true,
     "stateMutability": "view",
-    "type": "function"
+    "payable": false,
+    "inputs": [{ "type": "uint256", "name": "" }],
+    "outputs": [{ "type": "string", "name": "" }]
   }
 ]

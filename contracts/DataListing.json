@@ -9,7 +9,10 @@
       { "type": "string", "name": "tokenKey" },
       { "type": "string", "name": "dataKey" },
       { "type": "bytes", "name": "encryptedSecretsUrls" },
-      { "type": "string", "name": "dataSource" }
+      { "type": "string", "name": "dataSource" },
+      { "type": "address", "name": "tokenAddress" },
+      { "type": "uint256", "name": "initialBalance" },
+      { "type": "uint256", "name": "dataPointQuantity" }
     ]
   },
   { "type": "error", "name": "EmptyArgs", "inputs": [] },
@@ -63,28 +66,20 @@
     ]
   },
   {
+    "type": "event",
+    "anonymous": false,
+    "name": "Reward",
+    "inputs": [
+      { "type": "address", "name": "provider", "indexed": false },
+      { "type": "uint256", "name": "amount", "indexed": false }
+    ]
+  },
+  {
     "type": "function",
     "name": "acceptOwnership",
     "constant": false,
     "payable": false,
     "inputs": [],
-    "outputs": []
-  },
-  {
-    "type": "function",
-    "name": "decryptData",
-    "constant": false,
-    "payable": false,
-    "inputs": [
-      { "type": "string", "name": "source" },
-      { "type": "uint8", "name": "donHostedSecretsSlotID" },
-      { "type": "uint64", "name": "donHostedSecretsVersion" },
-      { "type": "string[]", "name": "args" },
-      { "type": "bytes[]", "name": "bytesArgs" },
-      { "type": "uint64", "name": "subscriptionId" },
-      { "type": "uint32", "name": "gasLimit" },
-      { "type": "bytes32", "name": "donID" }
-    ],
     "outputs": []
   },
   {
@@ -107,6 +102,15 @@
   },
   {
     "type": "function",
+    "name": "getDataPointPrice",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
     "name": "getDataSource",
     "constant": true,
     "stateMutability": "view",
@@ -122,6 +126,24 @@
     "payable": false,
     "inputs": [],
     "outputs": [{ "type": "bytes", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getPurchaser",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getTokenBalance",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
   },
   {
     "type": "function",
@@ -143,6 +165,33 @@
       { "type": "bytes", "name": "err" }
     ],
     "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "i_dataPointPrice",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "i_purchaser",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "i_tokenAddress",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
   },
   {
     "type": "function",
@@ -186,6 +235,15 @@
     "payable": false,
     "inputs": [],
     "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_dataPointQuantity",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
   },
   {
     "type": "function",
@@ -240,6 +298,15 @@
     "payable": false,
     "inputs": [],
     "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_tokenBalance",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
   },
   {
     "type": "function",

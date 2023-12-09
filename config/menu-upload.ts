@@ -3,7 +3,7 @@
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 export const menuUploadData = [
   {
-    label: "Fuffil Data Request",
+    label: "fulfill Data Request",
     href: "/dashboard/upload",
   },
 ]
