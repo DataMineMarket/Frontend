@@ -1,1 +1,341 @@
-[{"type":"constructor","stateMutability":"undefined","payable":false,"inputs":[{"type":"address","name":"router"},{"type":"string","name":"provideScript"},{"type":"string","name":"tokenKey"},{"type":"string","name":"dataKey"},{"type":"bytes","name":"encryptedSecretsUrls"},{"type":"string","name":"dataSource"},{"type":"address","name":"tokenAddress"},{"type":"uint256","name":"initialBalance"},{"type":"uint256","name":"dataPointQuantity"}]},{"type":"error","name":"EmptyArgs","inputs":[]},{"type":"error","name":"EmptySecrets","inputs":[]},{"type":"error","name":"EmptySource","inputs":[]},{"type":"error","name":"NoInlineSecrets","inputs":[]},{"type":"error","name":"OnlyRouterCanFulfill","inputs":[]},{"type":"error","name":"UnexpectedRequestID","inputs":[{"type":"bytes32","name":"requestId"}]},{"type":"event","anonymous":false,"name":"OwnershipTransferRequested","inputs":[{"type":"address","name":"from","indexed":true},{"type":"address","name":"to","indexed":true}]},{"type":"event","anonymous":false,"name":"OwnershipTransferred","inputs":[{"type":"address","name":"from","indexed":true},{"type":"address","name":"to","indexed":true}]},{"type":"event","anonymous":false,"name":"RequestFulfilled","inputs":[{"type":"bytes32","name":"id","indexed":true}]},{"type":"event","anonymous":false,"name":"RequestSent","inputs":[{"type":"bytes32","name":"id","indexed":true}]},{"type":"event","anonymous":false,"name":"Response","inputs":[{"type":"bytes32","name":"requestId","indexed":true},{"type":"bytes","name":"response","indexed":false},{"type":"bytes","name":"err","indexed":false}]},{"type":"event","anonymous":false,"name":"Reward","inputs":[{"type":"address","name":"provider","indexed":false},{"type":"uint256","name":"amount","indexed":false}]},{"type":"function","name":"acceptOwnership","constant":false,"payable":false,"inputs":[],"outputs":[]},{"type":"function","name":"getDataCIDs","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string[]","name":""}]},{"type":"function","name":"getDataKey","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"getDataPointPrice","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256","name":""}]},{"type":"function","name":"getDataSource","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"getEncryptedSecretsUrls","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"bytes","name":""}]},{"type":"function","name":"getPurchaser","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address","name":""}]},{"type":"function","name":"getTokenBalance","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256","name":""}]},{"type":"function","name":"getTokenKey","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"handleOracleFulfillment","constant":false,"payable":false,"inputs":[{"type":"bytes32","name":"requestId"},{"type":"bytes","name":"response"},{"type":"bytes","name":"err"}],"outputs":[]},{"type":"function","name":"i_dataPointPrice","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256","name":""}]},{"type":"function","name":"i_purchaser","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address","name":""}]},{"type":"function","name":"i_tokenAddress","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address","name":""}]},{"type":"function","name":"owner","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"address","name":""}]},{"type":"function","name":"provideData","constant":false,"payable":false,"inputs":[{"type":"uint8","name":"donHostedSecretsSlotID"},{"type":"uint64","name":"donHostedSecretsVersion"},{"type":"string[]","name":"args"},{"type":"bytes[]","name":"bytesArgs"},{"type":"uint64","name":"subscriptionId"},{"type":"uint32","name":"gasLimit"},{"type":"bytes32","name":"donID"}],"outputs":[]},{"type":"function","name":"s_dataCIDs","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256","name":""}],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"s_dataKey","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"s_dataPointQuantity","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256","name":""}]},{"type":"function","name":"s_dataSource","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"s_encryptedSecretsUrls","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"bytes","name":""}]},{"type":"function","name":"s_lastError","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"bytes","name":""}]},{"type":"function","name":"s_lastRequestId","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"bytes32","name":""}]},{"type":"function","name":"s_lastResponse","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"bytes","name":""}]},{"type":"function","name":"s_provideScript","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"s_tokenBalance","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"uint256","name":""}]},{"type":"function","name":"s_tokenKey","constant":true,"stateMutability":"view","payable":false,"inputs":[],"outputs":[{"type":"string","name":""}]},{"type":"function","name":"sendRequestCBOR","constant":false,"payable":false,"inputs":[{"type":"bytes","name":"request"},{"type":"uint64","name":"subscriptionId"},{"type":"uint32","name":"gasLimit"},{"type":"bytes32","name":"donID"}],"outputs":[{"type":"bytes32","name":"requestId"}]},{"type":"function","name":"transferOwnership","constant":false,"payable":false,"inputs":[{"type":"address","name":"to"}],"outputs":[]}]
+[
+  {
+    "type": "constructor",
+    "stateMutability": "undefined",
+    "payable": false,
+    "inputs": [
+      { "type": "address", "name": "router" },
+      { "type": "string", "name": "provideScript" },
+      { "type": "string", "name": "tokenKey" },
+      { "type": "string", "name": "dataKey" },
+      { "type": "bytes", "name": "encryptedSecretsUrls" },
+      { "type": "string", "name": "dataSource" },
+      { "type": "address", "name": "tokenAddress" },
+      { "type": "uint256", "name": "initialBalance" },
+      { "type": "uint256", "name": "dataPointQuantity" }
+    ]
+  },
+  { "type": "error", "name": "EmptyArgs", "inputs": [] },
+  { "type": "error", "name": "EmptySecrets", "inputs": [] },
+  { "type": "error", "name": "EmptySource", "inputs": [] },
+  { "type": "error", "name": "NoInlineSecrets", "inputs": [] },
+  { "type": "error", "name": "OnlyRouterCanFulfill", "inputs": [] },
+  {
+    "type": "error",
+    "name": "UnexpectedRequestID",
+    "inputs": [{ "type": "bytes32", "name": "requestId" }]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "OwnershipTransferRequested",
+    "inputs": [
+      { "type": "address", "name": "from", "indexed": true },
+      { "type": "address", "name": "to", "indexed": true }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "OwnershipTransferred",
+    "inputs": [
+      { "type": "address", "name": "from", "indexed": true },
+      { "type": "address", "name": "to", "indexed": true }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "RequestFulfilled",
+    "inputs": [{ "type": "bytes32", "name": "id", "indexed": true }]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "RequestSent",
+    "inputs": [{ "type": "bytes32", "name": "id", "indexed": true }]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "Response",
+    "inputs": [
+      { "type": "bytes32", "name": "requestId", "indexed": true },
+      { "type": "bytes", "name": "response", "indexed": false },
+      { "type": "bytes", "name": "err", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "Reward",
+    "inputs": [
+      { "type": "address", "name": "provider", "indexed": false },
+      { "type": "uint256", "name": "amount", "indexed": false }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "acceptOwnership",
+    "constant": false,
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "getDataCIDs",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string[]", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getDataKey",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getDataPointPrice",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getDataSource",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getEncryptedSecretsUrls",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "bytes", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getPurchaser",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getTokenBalance",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "getTokenKey",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "handleOracleFulfillment",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      { "type": "bytes32", "name": "requestId" },
+      { "type": "bytes", "name": "response" },
+      { "type": "bytes", "name": "err" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "i_dataPointPrice",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "i_purchaser",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "i_tokenAddress",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "address", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "provideData",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      { "type": "uint8", "name": "donHostedSecretsSlotID" },
+      { "type": "uint64", "name": "donHostedSecretsVersion" },
+      { "type": "string[]", "name": "args" },
+      { "type": "bytes[]", "name": "bytesArgs" },
+      { "type": "uint64", "name": "subscriptionId" },
+      { "type": "uint32", "name": "gasLimit" },
+      { "type": "bytes32", "name": "donID" }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "s_dataCIDs",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [{ "type": "uint256", "name": "" }],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_dataKey",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_dataPointQuantity",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_dataSource",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_encryptedSecretsUrls",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "bytes", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_lastError",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "bytes", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_lastRequestId",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "bytes32", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_lastResponse",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "bytes", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_provideScript",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_tokenBalance",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "uint256", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "s_tokenKey",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [{ "type": "string", "name": "" }]
+  },
+  {
+    "type": "function",
+    "name": "sendRequestCBOR",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      { "type": "bytes", "name": "request" },
+      { "type": "uint64", "name": "subscriptionId" },
+      { "type": "uint32", "name": "gasLimit" },
+      { "type": "bytes32", "name": "donID" }
+    ],
+    "outputs": [{ "type": "bytes32", "name": "requestId" }]
+  },
+  {
+    "type": "function",
+    "name": "transferOwnership",
+    "constant": false,
+    "payable": false,
+    "inputs": [{ "type": "address", "name": "to" }],
+    "outputs": []
+  }
+]
