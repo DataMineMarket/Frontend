@@ -8,18 +8,16 @@ Clone the repository and install dependencies.
 git clone https://github.com/DataMineMarket/Frontend.git
 ```
 
-Update and pull the submodules for Chainlink Functions. This submodule is needed for pulling the scripts to post data on ipfs.
-
-```bash
-git submodule init
-git submodule update --init --recursive
-```
-
 The `pnpm` CLI is the recommended package manager but `npm` and `yarn` should work too.
 
 ```bash
 pnpm install
 ```
+
+Setup Steps:
+
+1. Create a `.env` based on `.env.example`. Obtain Google Client ID and Secret from the [Google Developer Console](https://console.developers.google.com/apis/credentials).
+2. From the contracts repository, copy `dataKey.txt` to `./dataKey.txt` in the root of this repository.
 
 ### Development
 
@@ -66,10 +64,6 @@ The [ui.shadcn.com](https://ui.shadcn.com) components are included in the `/comp
 ## Dependencies - Functions
 
 A key dependency for the [Data Nexus Contracts](https://github.com/DataMineMarket/DataNexusContracts) to post data on ipfs in a decentralised manner is [Chainlink Functions](https://docs.chain.link/chainlink-functions).
-
-### Setup
-
-To set up this repository to make use of functions, please follow the following steps:
 
 # Acknowledgements
 

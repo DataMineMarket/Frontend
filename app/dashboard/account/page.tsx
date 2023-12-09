@@ -29,10 +29,14 @@ export default function PageDashboardAccount() {
             <WalletAddress truncate />
           </div>
           <div className="mt-3">
-            <span className="mr-1 font-bold">Balance:</span> <WalletBalance />
+            <span className="mr-1 font-bold">
+              Earnings from uploading Data:
+            </span>{" "}
+            <WalletBalance />
+            <span className="mr-1 font-bold">Link</span>
           </div>
           <div className="mt-3">
-            <span className="mr-1 font-bold">Nonce:</span> <WalletNonce />
+            <span className="mr-1 font-bold">Data Request Created: 1</span>
           </div>
           <hr className="my-3 dark:opacity-30" />
         </Card>

@@ -58,8 +58,9 @@ export function Web2Integrations({
   className,
   ...props
 }: Web2IntegrationsProps) {
-  const { chain, chains } = useNetwork()
+  const { chain } = useNetwork()
   const chainId = chain!.id
+
   // Throws error if chain id is not in contract addresses
   if (!contractAddresses[chainId]) {
     throw new Error(
@@ -91,6 +92,7 @@ export function Web2Integrations({
     functionName: "getDataListingSources",
     watch: true,
     onSuccess: (data: string[]) => {
+      console.log("Data Sources", data)
       setDataSources(data)
     },
   })
