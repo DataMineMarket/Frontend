@@ -58,6 +58,7 @@ export default function PageSourceData() {
   const [encryptedSecretsUrls, setEncryptedSecretsUrls] = useState<string>("")
   const [allowanceIsSufficient, setAllowanceIsSufficient] =
     useState<boolean>(false)
+  const [privKey, setPrivKey] = useState<string>("")
 
   // Button handler to create data listing
   const handleCreateListing = async (
@@ -65,8 +66,8 @@ export default function PageSourceData() {
   ) => {
     event.preventDefault() // Prevent form submission
     try {
-      const secrets = await generateKeys()
-      // Assuming the write function is part of the useContractWrite hook
+      // Assuming the write function is part of the useContractWrite hooks
+      await generateKeys()
       write?.()
       console.log("DATA", data)
       isSuccess && setShowSuccessModal(true)
@@ -83,7 +84,16 @@ export default function PageSourceData() {
     event.preventDefault() // Prevent form submission
     try {
       // Assuming the write function is part of the useContractWrite hook
-      approvalWrite?.()
+      generateKeys()
+        .then(() => {
+          approvalWrite?.()
+        })
+        .catch((error) => {
+          console.error("Error generating keys or approving USDC:", error)
+          setErrorMessage(
+            `Error generating keys or approving USDC:, ${error as string}`
+          )
+        })
     } catch (error) {
       console.error("Error approving USDC:", error)
     }
@@ -137,7 +147,7 @@ export default function PageSourceData() {
 
     const dataPubKey = toBase64(new Uint8Array(exportedDataPublicKey))
     const dataPrivKey = toBase64(new Uint8Array(exportedDataPrivateKey))
-
+    setPrivKey(dataPrivKey)
     setDataKey(dataPubKey)
 
     const secrets = {
@@ -206,6 +216,7 @@ export default function PageSourceData() {
         .then((response) => response.json())
         .then((data) => {
           console.log(data)
+          setShowSuccessModal(true)
         })
         .catch((error) => console.error(error))
     },
@@ -374,6 +385,7 @@ export default function PageSourceData() {
         <SuccessModal
           isOpen={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}
+          privKey={privKey}
         />
         <ErrorModal
           isOpen={showErrorModal}

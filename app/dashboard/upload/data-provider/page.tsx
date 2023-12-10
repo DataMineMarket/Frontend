@@ -1,5 +1,6 @@
 "use client"
 
+import process from "process"
 import { useEffect, useState } from "react"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
 import Link from "next/link"
@@ -35,6 +36,7 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 
+import { networkConfig } from "../data-provider/functions-handler"
 import { integrationDescriptions } from "../templates/integrations-templates"
 import { networkConfig, prepareArgs } from "./functions-handler"
 import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
@@ -75,6 +77,9 @@ export default function DataProviderPage() {
     onSuccess: (data: string) => {
       setTokenKey(data)
     },
+    onError: (error: any) => {
+      console.error("TokenKey Error: ", error)
+    },
   })
 
   useContractRead({
@@ -93,7 +98,6 @@ export default function DataProviderPage() {
           setArgs(args)
         })
         .catch((error) => {
-          console.error("Error: ", error)
         })
     }
   }, [authToken, dataKey, tokenKey])
@@ -162,6 +166,7 @@ export default function DataProviderPage() {
 
   return (
     <div className="container relative mt-10">
+      {address}
       <PageHeader className="pb-8">
         {integrationDescription.image}
         <PageHeaderHeading>Fit</PageHeaderHeading>
