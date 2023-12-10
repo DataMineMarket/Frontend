@@ -65,7 +65,7 @@ export default function PageData() {
                   key={dataCidItem} // Use dataCidItem as key for uniqueness
                   cid={cid}
                   dataCid={dataCidItem}
-                  href={`/path-for-data-card/${dataCidItem}`} // Replace with actual path
+                  href={`/dashboard/data-requests/${cid}/${dataCidItem}`} // Replace with actual path
                   // ... additional props if needed
                 />
               ))
