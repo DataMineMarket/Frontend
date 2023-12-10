@@ -110,7 +110,16 @@ export default function PageData() {
           </div>
         </div>
       </IsWalletConnected>
-      <IsWalletDisconnected>{/* ... existing code */}</IsWalletDisconnected>
+      <IsWalletDisconnected>
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-lg text-gray-600">
+            Please connect your wallet to view this page.
+          </p>
+          <Link href="/dashboard">
+            <a className="mt-4 text-blue-600 hover:underline">Go back</a>
+          </Link>
+        </div>
+      </IsWalletDisconnected>
     </motion.div>
   )
 }
