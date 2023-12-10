@@ -23,7 +23,7 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 
-import { downloadDecryptedData } from "./decrypt"
+import { downloadDecryptedData } from "../decrypt"
 
 export default function DecryptedDataPage() {
   const dataCid = usePathname().split("/").pop() as string

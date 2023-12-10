@@ -1,8 +1,7 @@
 
-export async function downloadDecryptedData(dataCid: string, dataPrivKey: string) {
+export async function downloadDecryptedData(dataCids: string[], dataPrivKey: string) {
     // Replace the following line with your actual data fetching/decrypting logic
-    const decryptedData = await getDecryptedData(dataCid, dataPrivKey);
-
+    const decryptedData = await getDecryptedData(dataCids, dataPrivKey);
 
     // Create a blob from your data
     const blob = new Blob([decryptedData], { type: 'text/plain' });
@@ -26,7 +25,7 @@ export async function downloadDecryptedData(dataCid: string, dataPrivKey: string
     link.parentNode!.removeChild(link);
   };
 
-export async function getDecryptedData(dataCid: string, dataPrivKey: string) : Promise<string> {
+export async function getDecryptedData(dataCids: string[], dataPrivKey: string) : Promise<string> {
   const encodedDataKey = base64ToArrayBuffer(dataPrivKey);
   const importedDataKey = await crypto.subtle.importKey(
     "pkcs8",
@@ -39,10 +38,15 @@ export async function getDecryptedData(dataCid: string, dataPrivKey: string) : P
     ["decrypt"]
   );
 
+  const decryptedDataAll = "";
+
+  for (const dataCid of dataCids) {
+
   const resp = await fetch(`https://${dataCid}.ipfs.nftstorage.link/`);
 
   const data = (await resp.json()).data;
 
+    // TOOD: return as json data
   try {
   const decryptedData = new TextDecoder().decode(
     await crypto.subtle.decrypt(
@@ -53,12 +57,14 @@ export async function getDecryptedData(dataCid: string, dataPrivKey: string) : P
       base64ToArrayBuffer(data)
     )
   );
-    return decryptedData;
+  decryptedDataAll.concat(decryptedData);
   }
   catch (e) {
     console.log("error", e);
-    return JSON.stringify(sampleData)
+    decryptedDataAll.concat(JSON.stringify(sampleData));
   }
+}
+  return decryptedDataAll;
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {

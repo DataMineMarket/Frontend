@@ -18,8 +18,15 @@ import { FADE_DOWN_ANIMATION_VARIANTS } from "@/config/design"
 import { cn } from "@/lib/utils"
 import { fadeUpVariant } from "@/lib/utils/motion"
 import { buttonVariants } from "@/components/ui/button"
+import {
+  PageHeader,
+  PageHeaderDescription,
+  PageHeaderHeading,
+} from "@/components/layout/page-header"
 import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
+
+import { downloadDecryptedData } from "./decrypt"
 
 export default function PageData() {
   const cid = usePathname().split("&address=").pop() as string
@@ -27,6 +34,8 @@ export default function PageData() {
     | `0x${string}`
     | undefined
   const [dataCid, setDataCid] = useState<string[]>([])
+  const [dataPrivKey, setDataPrivKey] = useState<string>("")
+  const isDataKeyProvided = dataPrivKey.trim().length > 0
 
   // Hook to get all the data fulfillled for a given data listing contract
   useContractRead({
@@ -42,6 +51,18 @@ export default function PageData() {
 
   const noDataCIDs = dataCid.length < 1
 
+  function handleDownload() {
+    if (isDataKeyProvided) {
+      downloadDecryptedData(dataCid, dataPrivKey)
+        .then(() => {
+          console.log("Download triggered")
+        })
+        .catch((error) => {
+          console.error("Download failed", error)
+        })
+    }
+  }
+
   return (
     <motion.div
       animate="show"
@@ -52,57 +73,44 @@ export default function PageData() {
       whileInView="show"
     >
       <IsWalletConnected>
-        <div className="col-span-12 flex flex-col items-center justify-center lg:col-span-9">
-          <div className="text-center">{/* ... existing code */}</div>
-          <div className="mx-auto mt-6 grid w-full max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="container mx-auto p-4">
+          <div className="flex min-h-screen flex-col items-center justify-center">
+            {" "}
+            <PageHeader className="pb-8">
+              <PageHeaderHeading>Decrypted Data</PageHeaderHeading>
+              <PageHeaderDescription>
+                Download your decrypted data by providing your data key.
+              </PageHeaderDescription>
+            </PageHeader>
             {noDataCIDs ? (
               <p className="col-span-full text-lg text-gray-600">
                 No data has been collected for this data request.
               </p>
             ) : (
-              dataCid.map((dataCidItem, index) => (
-                <DataCard
-                  key={dataCidItem} // Use dataCidItem as key for uniqueness
-                  cid={cid}
-                  dataCid={dataCidItem}
-                  href={`/dashboard/data-requests/${cid}/${dataCidItem}`} // Replace with actual path
-                  // ... additional props if needed
-                />
-              ))
+              <div>
+                <div className="mt-4 w-full">
+                  <textarea
+                    placeholder="Enter your data key here..."
+                    value={dataPrivKey}
+                    onChange={(e) => setDataPrivKey(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 p-2"
+                    style={{ minHeight: "5em" }} // Set a minimum height for 5 lines approximately
+                    rows={5} // Set to 5 to fit at least 5 lines without scrolling
+                  />
+                </div>
+                <button
+                  className={cn(buttonVariants({ variant: "default" }), "mt-4")}
+                  onClick={handleDownload}
+                  disabled={!isDataKeyProvided}
+                >
+                  Download Data
+                </button>
+              </div>
             )}
           </div>
         </div>
       </IsWalletConnected>
       <IsWalletDisconnected>{/* ... existing code */}</IsWalletDisconnected>
-    </motion.div>
-  )
-}
-
-interface DataCardProps extends MotionProps {
-  cid: string
-  dataCid: string
-  href: string
-}
-
-function DataCard({ cid, dataCid, href }: DataCardProps) {
-  return (
-    <motion.div
-      variants={fadeUpVariant()}
-      className="relative col-span-1 overflow-hidden rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-sm transition-shadow hover:shadow-lg"
-    >
-      <div className="flex flex-col items-center justify-center">
-        <div className="text-sm font-semibold text-gray-500">{cid}</div>
-        <div className="mb-4 mt-1 text-3xl font-bold">{dataCid}</div>
-        <Link
-          href={`${href}/data-requests/${cid}/${dataCid}`}
-          className={cn(
-            "inline-block rounded-full bg-blue-600 px-6 py-2 text-center text-sm font-medium leading-6 text-white transition hover:bg-blue-700 focus:outline-none focus:ring",
-            buttonVariants()
-          )}
-        >
-          View Data Collected
-        </Link>
-      </div>
     </motion.div>
   )
 }
