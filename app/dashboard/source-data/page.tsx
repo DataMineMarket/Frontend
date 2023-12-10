@@ -10,7 +10,6 @@ import {
   DataListingAbi,
   DataListingFactoryAbi,
 } from "@/contracts"
-import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
 import { ethers } from "ethers"
 import { motion } from "framer-motion"
 import {
@@ -27,6 +26,7 @@ import { FADE_DOWN_ANIMATION_VARIANTS } from "@/config/design"
 import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 
+import { networkConfig } from "../upload/data-provider/functions-handler"
 import { ErrorModal, SuccessModal } from "./modals"
 import { provideScript } from "./provide"
 

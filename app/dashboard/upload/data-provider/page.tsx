@@ -7,7 +7,6 @@ import { useSearchParams } from "next/navigation"
 import { useRouter } from "next/router"
 import { DataListingAbi } from "@/contracts"
 import { turboIntegrations } from "@/data/turbo-integrations"
-import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
 import { env } from "@/env.mjs"
 import { ethers } from "ethers"
 import { LuBook } from "react-icons/lu"
@@ -37,7 +36,7 @@ import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 
 import { integrationDescriptions } from "../templates/integrations-templates"
-import { prepareArgs } from "./functions-handler"
+import { networkConfig, prepareArgs } from "./functions-handler"
 import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
 
 // import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
