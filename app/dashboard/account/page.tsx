@@ -33,7 +33,7 @@ export default function PageDashboardAccount() {
               Earnings from uploading Data:
             </span>{" "}
             <WalletBalance />
-            <span className="mr-1 font-bold">Link</span>
+            <span className="mr-1 font-bold"> USDC</span>
           </div>
           <div className="mt-3">
             <span className="mr-1 font-bold">Data Request Created: 1</span>
