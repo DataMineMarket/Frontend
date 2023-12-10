@@ -16,8 +16,8 @@ pnpm install
 
 Setup Steps:
 
-1. Create a `.env` based on `.env.example`. Obtain Google Client ID and Secret from the [Google Developer Console](https://console.developers.google.com/apis/credentials).
-2. From the contracts repository, copy `dataKey.txt` to `./dataKey.txt` in the root of this repository.
+1. Create a `.env.local` based on `.env.example`. Obtain Google Client ID and Secret from the [Google Developer Console](https://console.developers.google.com/apis/credentials).
+2. Add permission to allow gmails to access the oath in the google cloud console. [Google Cloud Console](https://console.cloud.google.com/apis/credentials/consent)
 
 ### Development
 

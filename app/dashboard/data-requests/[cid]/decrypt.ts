@@ -60,6 +60,8 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
           encryptedData += data
       }
 
+      console.log("Decryption")
+
       // TODO: Fix the error in decryption here
       const decryptedAesKey = await crypto.subtle.decrypt(
           {

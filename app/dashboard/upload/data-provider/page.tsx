@@ -36,7 +36,7 @@ import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 
 import { integrationDescriptions } from "../templates/integrations-templates"
-import { prepareArgs } from "./functions-handler"
+import { networkConfig, prepareArgs } from "./functions-handler"
 import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
 
 // import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
