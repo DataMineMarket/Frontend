@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
-export async function downloadDecryptedData(dataCid: string, dataPrivKey: string) {
-    // Replace the following line with your actual data fetching/decrypting logic
-    const decryptedData = await getDecryptedData(dataCid, dataPrivKey);
+export async function downloadDecryptedData(dataCids: string[], dataPrivKey: string) {
 
+    const decryptedData = await getDecryptedData(dataCids, dataPrivKey);
 
     // Create a blob from your data
     const blob = new Blob([decryptedData], { type: 'text/plain' });
@@ -26,7 +26,7 @@ export async function downloadDecryptedData(dataCid: string, dataPrivKey: string
     link.parentNode!.removeChild(link);
   };
 
-export async function getDecryptedData(dataCid: string, dataPrivKey: string) : Promise<string> {
+export async function getDecryptedData(dataCids: string[], dataPrivKey: string) : Promise<string> {
   const encodedDataKey = base64ToArrayBuffer(dataPrivKey);
   const importedDataKey = await crypto.subtle.importKey(
     "pkcs8",
@@ -39,30 +39,75 @@ export async function getDecryptedData(dataCid: string, dataPrivKey: string) : P
     ["decrypt"]
   );
 
-  const resp = await fetch(`https://${dataCid}.ipfs.nftstorage.link/`);
+  console.log("importedDataKey",importedDataKey)
 
-  const data = (await resp.json()).data;
+  let decryptedDataAll = ""
+   for (const cid of dataCids) {
+    try {
+      const bundledResponse = await fetch(`https://${cid}.ipfs.nftstorage.link/`)
+      const bundledData = await bundledResponse.json()
+      const encryptedAesKey = bundledData.aesKey
+      const encryptedIv = bundledData.iv
+      const dataCids = bundledData.dataCids
 
-  try {
-  const decryptedData = new TextDecoder().decode(
-    await crypto.subtle.decrypt(
-      {
-        name: "RSA-OAEP",
-      },
-      importedDataKey,
-      base64ToArrayBuffer(data)
-    )
-  );
-    return decryptedData;
+      let encryptedData = ""
+      for (const cid of dataCids) {
+          const resp = await fetch(`https://${cid}.ipfs.nftstorage.link/`)
+
+          const data = (await resp.json()).data
+
+          // This works fine
+          encryptedData += data
+      }
+
+      // TODO: Fix the error in decryption here
+      const decryptedAesKey = await crypto.subtle.decrypt(
+          {
+              name: "RSA-OAEP",
+          },
+          importedDataKey,
+          base64ToArrayBuffer(encryptedAesKey)
+      )
+      console.log("decryptedAesKey",decryptedAesKey)
+
+      const aesKey = await crypto.subtle.importKey(
+          "raw",
+          decryptedAesKey,
+          { name: "AES-GCM", length: 256 },
+          true,
+          ["decrypt"]
+      );
+      console.log("aesKey",aesKey)
+      const iv = await crypto.subtle.decrypt(
+          {
+              name: "RSA-OAEP",
+          },
+          importedDataKey,
+          base64ToArrayBuffer(encryptedIv)
+      )
+
+      console.log("iv",iv)
+      const decryptedData = new TextDecoder().decode(await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: new Uint8Array(iv) },
+          aesKey,
+          base64ToArrayBuffer(encryptedData)
+      ));
+
+      console.log("dc", decryptedData)
+
+      decryptedDataAll += decryptedData + "\n"
+    }
+    catch (e) {
+      console.log(e)
+      decryptedDataAll += JSON.stringify(sampleData) + "\n"
+    }
   }
-  catch (e) {
-    console.log("error", e);
-    return JSON.stringify(sampleData)
-  }
+  return decryptedDataAll;
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
-    const binaryString = atob(base64);
+    const binaryString = atob(base64)
+    console.log("binaryString",binaryString)
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);

@@ -13,7 +13,6 @@ import {
   PageHeaderHeading,
 } from "@/components/layout/page-header"
 import { CopyButton } from "@/components/shared/copy-button"
-import { ExampleDemos } from "@/components/shared/example-demos"
 
 import { Web2Integrations } from "../dashboard/upload/integrations"
 
