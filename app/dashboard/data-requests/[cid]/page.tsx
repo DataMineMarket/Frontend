@@ -6,8 +6,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   contractAddresses,
+  DataListingAbi,
   DataListingFactoryAbi,
-  FunctionsConsumerAbi,
 } from "@/contracts"
 import { motion, MotionProps } from "framer-motion"
 import ReactMarkdown from "react-markdown"
@@ -31,7 +31,7 @@ export default function PageData() {
   // Hook to get all the data fulfillled for a given data listing contract
   useContractRead({
     address: formattedCid,
-    abi: FunctionsConsumerAbi,
+    abi: DataListingAbi,
     functionName: "getDataCIDs",
     args: [],
     watch: true,
