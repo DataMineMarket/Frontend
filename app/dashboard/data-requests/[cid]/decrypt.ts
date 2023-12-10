@@ -38,35 +38,62 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
     ["decrypt"]
   );
 
-  let decryptedDataAll = "";
+  let decryptedDataAll = ""
+   for (const cid of dataCids) {
+    try {
+      const bundledResponse = await fetch(`https://${cid}.ipfs.nftstorage.link/`)
+      const bundledData = await bundledResponse.json()
+      const encryptedAesKey = bundledData.aesKey
+      const encryptedIv = bundledData.iv
+      const dataCids = bundledData.dataCids
 
-  console.log("dataCids", dataCids);
+      let encryptedData = ""
+      for (const cid of dataCids) {
+          const resp = await fetch(`https://${cid}.ipfs.nftstorage.link/`)
 
-  for (const dataCid of dataCids) {
+          const data = (await resp.json()).data
 
-  const resp = await fetch(`https://${dataCid}.ipfs.nftstorage.link/`);
+          encryptedData += data
+          console.log(data)
+      }
+      const decryptedAesKey = await crypto.subtle.decrypt(
+          {
+              name: "RSA-OAEP",
+          },
+          importedDataKey,
+          base64ToArrayBuffer(encryptedAesKey)
+      )
 
-  const data = (await resp.json()).data;
- 
-    // TOOD: return as json data
-  try {
-  const decryptedData = new TextDecoder().decode(
-    await crypto.subtle.decrypt(
-      {
-        name: "RSA-OAEP",
-      },
-      importedDataKey,
-      base64ToArrayBuffer(data)
-    )
-  );
-  console.log("decryptedData", decryptedData);
-  decryptedDataAll = decryptedDataAll.concat(decryptedData);
+      const aesKey = await crypto.subtle.importKey(
+          "raw",
+          decryptedAesKey,
+          { name: "AES-GCM", length: 256 },
+          true,
+          ["decrypt"]
+      );
+
+      const iv = await crypto.subtle.decrypt(
+          {
+              name: "RSA-OAEP",
+          },
+          importedDataKey,
+          base64ToArrayBuffer(encryptedIv)
+      )
+      const decryptedData = new TextDecoder().decode(await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: new Uint8Array(iv) },
+          aesKey,
+          base64ToArrayBuffer(encryptedData)
+      ));
+
+      console.log("dc", decryptedData)
+
+      decryptedDataAll += decryptedData + "\n"
+    }
+    catch (e) {
+      console.log(e)
+      decryptedDataAll += JSON.stringify(sampleData) + "\n"
+    }
   }
-  catch (e) {
-    console.log("error", e);
-   decryptedDataAll = decryptedDataAll.concat(JSON.stringify(sampleData));
-  }
-}
   return decryptedDataAll;
 }
 
