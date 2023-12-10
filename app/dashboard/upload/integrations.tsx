@@ -5,18 +5,14 @@
 import { title } from "process"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import {
-  contractAddresses,
-  DataListingFactoryAbi,
-} from "@/contracts"
+import { contractAddresses, DataListingFactoryAbi } from "@/contracts"
+import { c } from "@wagmi/cli/dist/config-6e2b110a"
+import { use } from "chai"
 import { motion, MotionProps } from "framer-motion"
 import ReactMarkdown from "react-markdown"
 import Balancer from "react-wrap-balancer"
-import { useContractRead, useNetwork } from "wagmi"
+import { useContractRead, useNetwork, useSwitchNetwork } from "wagmi"
 
-import { cn } from "@/lib/utils"
-import { fadeUpVariant } from "@/lib/utils/motion"
-import { buttonVariants } from "@/components/ui/button"
 import { PageSectionGrid } from "@/components/layout/page-section"
 
 import { Integration, integrations } from "./templates/integrations-templates"
@@ -27,7 +23,9 @@ interface Web2IntegrationsProps extends MotionProps {
 
 function generateIntegrations(
   addresses: string[],
-  sources: string[]
+  sources: string[],
+  prices: string[],
+  dataPoints: string[]
 ): Integration[] {
   const sourceToTitleMap: { [key: string]: string } = {
     GoogleFit: "Google Fit",
@@ -42,11 +40,18 @@ function generateIntegrations(
   for (let i = 0; i < sources.length; i++) {
     const source = sources[i]
     const address = addresses[i]
+    const price = prices[i]
+    const dataPoint = dataPoints[i]
     const title = sourceToTitleMap[source]
 
     const integration = integrations.find((int) => int.title === title)
     if (integration) {
-      generatedIntegrations.push({ ...integration, contractAddress: address })
+      generatedIntegrations.push({
+        ...integration,
+        contractAddress: address,
+        price: price,
+        dataPoint: dataPoint,
+      })
     }
   }
 
@@ -60,18 +65,18 @@ export function Web2Integrations({
   const { chain } = useNetwork()
   const chainId = chain!.id
 
-  // Throws error if chain id is not in contract addresses
   if (!contractAddresses[chainId]) {
-    throw new Error(
-      `Chain ID ${chainId} is not supported by the DataListingFactory contract` +
-        `Supported chains: ${Object.keys(contractAddresses).join(", ")}`
-    )
+    // Change network to 80001
   }
+
   const dataListingFactoryAddress =
     contractAddresses[chainId]["DataListingFactory"]
 
   const [listingAddresses, setListingAddresses] = useState<string[]>()
   const [dataSources, setDataSources] = useState<string[]>()
+  const [prices, setPrices] = useState<string[]>()
+  const [pricesDisplay, setPricesDisplay] = useState<string[]>()
+  const [dataPoints, setDataPoints] = useState<string[]>()
   const [generatedIntegrations, setGeneratedIntegrations] =
     useState<Integration[]>()
 
@@ -91,25 +96,65 @@ export function Web2Integrations({
     functionName: "getDataListingSources",
     watch: true,
     onSuccess: (data: string[]) => {
-      console.log("Data Sources", data)
       setDataSources(data)
     },
   })
 
+  useContractRead({
+    address: dataListingFactoryAddress,
+    abi: DataListingFactoryAbi,
+    functionName: "getDataListingInitialBalance",
+    watch: true,
+    onSuccess: (data: string[]) => {
+      console.log("Prices", data)
+      setPrices(data)
+    },
+  })
+
+  useContractRead({
+    address: dataListingFactoryAddress,
+    abi: DataListingFactoryAbi,
+    functionName: "getDataListingDataPointQuantity",
+    watch: true,
+    onSuccess: (data: string[]) => {
+      // map data to just string
+      const formattedData = data.map((d) => d.toString())
+      console.log("Data Sources", formattedData)
+      setDataPoints(formattedData)
+    },
+  })
+
   useEffect(() => {
-    if (listingAddresses && dataSources) {
+    if (listingAddresses && dataSources && prices && dataPoints) {
+      // map prices to divide by 10^6
+      const pricesDisplay = prices.map((price) => {
+        return (parseInt(price) / 10 ** 6).toString()
+      })
       setGeneratedIntegrations(
-        generateIntegrations(listingAddresses, dataSources)
+        generateIntegrations(
+          listingAddresses,
+          dataSources,
+          pricesDisplay,
+          dataPoints
+        )
       )
     }
-  }, [listingAddresses, dataSources])
+  }, [listingAddresses, dataSources, prices, dataPoints])
 
   return (
     <div>
       {generatedIntegrations ? (
         <PageSectionGrid className={className} {...props}>
           {generatedIntegrations.map(
-            ({ contractAddress, title, description, href, demo }) => (
+            ({
+              contractAddress,
+              title,
+              description,
+              href,
+              demo,
+              price,
+              dataPoint,
+            }) => (
               <DemoCard
                 key={contractAddress}
                 title={title}
@@ -117,6 +162,8 @@ export function Web2Integrations({
                 description={description}
                 href={href}
                 demo={demo}
+                price={price}
+                dataPoint={dataPoint}
               />
             )
           )}
@@ -141,6 +188,8 @@ interface DemoCardProps extends MotionProps {
   demo: React.ReactNode
   title: string
   contractAddress: string
+  price?: string
+  dataPoint?: string
   description: string
   large?: boolean
   href?: string
@@ -149,52 +198,52 @@ interface DemoCardProps extends MotionProps {
 function DemoCard({
   title,
   contractAddress,
+  price,
+  dataPoint,
   description,
   href,
   demo,
   large,
+  ...motionProps // Include other motion props if needed
 }: DemoCardProps) {
   return (
     <motion.div
-      variants={fadeUpVariant()}
-      className={`relative col-span-1 overflow-hidden rounded-xl border bg-card px-4 shadow-sm transition-shadow hover:shadow-md ${
-        large ? "md:col-span-2" : ""
+      {...motionProps}
+      className={`relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-lg ${
+        large ? "col-span-2" : "col-span-1"
       }`}
+      whileHover={{ translateY: -5 }}
     >
-      <div className="flex h-60 items-center justify-center">{demo}</div>
-      <div className="mx-auto max-w-xl text-center">
-        <h2 className="mb-3 bg-gradient-to-br from-black to-stone-500 bg-clip-text text-xl font-bold text-transparent dark:from-stone-100 dark:to-emerald-200 md:text-3xl md:font-normal">
-          <Balancer>{title}</Balancer>
-        </h2>
-        <div className="prose-sm md:prose -mt-2 leading-normal text-muted-foreground">
-          <Balancer>
-            <ReactMarkdown
-              components={{
-                a: ({ ...props }) => (
-                  <a
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    {...props}
-                    className="font-medium text-foreground underline transition-colors dark:text-blue-200"
-                  />
-                ),
-
-                code: ({ ...props }) => (
-                  <code
-                    {...props}
-                    className="rounded-sm px-1 py-0.5 font-mono font-medium text-foreground"
-                  />
-                ),
-              }}
-            >
-              {description}
-            </ReactMarkdown>
-          </Balancer>
+      <div className="flex h-60 items-center justify-center p-4 text-center">
+        {demo}
+      </div>
+      <div className="p-4 text-center">
+        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <p className="text-sm text-gray-600">{description}</p>
+        <div className="mt-2">
+          <span className="block text-xs uppercase text-gray-400">
+            Contract Address
+          </span>
+          <span className="block text-sm text-gray-500">
+            {contractAddress.slice(0, 6)}...
+          </span>
         </div>
-        {!href ? null : (
+        <div className="mt-2">
+          <span className="block text-xs uppercase text-gray-400">
+            Total Payout
+          </span>
+          <span className="block text-sm text-gray-500">{price} USDC</span>
+        </div>
+        <div className="mb-4 mt-2">
+          <span className="block text-xs uppercase text-gray-400">
+            Data Points
+          </span>
+          <span className="block text-sm text-gray-500">{dataPoint}</span>
+        </div>
+        {href && (
           <Link
             href={`${href}&address=${contractAddress}`}
-            className={cn(buttonVariants(), "my-4")}
+            className="inline-block rounded bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600"
           >
             Upload Data
           </Link>
