@@ -22,16 +22,15 @@ const mumbai = {
   iconUrl: "/icons/NetworkPolygonTest.svg",
 }
 
-export const ETH_CHAINS_TEST = [goerli, mumbai]
-
-export const ETH_CHAINS_PROD = [mainnet]
+export const ETH_CHAINS_TEST = [mumbai]
+export const ETH_CHAINS_PROD = [mumbai]
 export const ETH_CHAINS_DEV =
   env.NEXT_PUBLIC_PROD_NETWORKS_DEV === "true"
     ? [...ETH_CHAINS_PROD, ...ETH_CHAINS_TEST]
     : [...ETH_CHAINS_TEST]
 
 export const CHAINS: Chain[] =
-  process.env.NODE_ENV === "production" ? ETH_CHAINS_PROD : ETH_CHAINS_DEV
+  process.env.NODE_ENV === "production" ? ETH_CHAINS_DEV : ETH_CHAINS_DEV
 
 const PROVIDERS: ChainProviderFn<Chain>[] = []
 
