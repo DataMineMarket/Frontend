@@ -121,6 +121,7 @@ export default function DataProviderPage() {
     eventName: "Response",
     listener(log: any) {
       setDataResponse(log[0].args.response)
+      console.log("RESPONSE EVENT LOG:", log)
       if (log[0].args.response === "0x") {
         setTransactionState("failed")
         console.log("failed log: ", log)

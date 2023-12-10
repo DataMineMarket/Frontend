@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa"
 
-import { menuAdmin } from "@/config/menu-admin"
 import { menuDashboard } from "@/config/menu-dashboard"
 import { menuSourceData } from "@/config/menu-source"
 import { menuUploadData } from "@/config/menu-upload"

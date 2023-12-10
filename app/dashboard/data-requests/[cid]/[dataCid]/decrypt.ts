@@ -23,7 +23,7 @@ export async function downloadDecryptedData(dataCid: string, dataPrivKey: string
     link.click();
 
     // Remove the link from the DOM
-    link.parentNode.removeChild(link);
+    link.parentNode!.removeChild(link);
   };
 
 export async function getDecryptedData(dataCid: string, dataPrivKey: string) : Promise<string> {
