@@ -30,7 +30,7 @@ export default function PageDashboard() {
             <WalletAddress className="block text-lg font-light text-gray-600 dark:text-gray-300" />
             <div className="mt-4">
               <span className="text-2xl font-light text-gray-700 dark:text-gray-200">
-                Earnings: <WalletBalance decimals={7} /> ETH
+                Earnings: <WalletBalance decimals={7} /> USDC
               </span>
             </div>
             <div className="text-2xl font-light text-gray-700 dark:text-gray-200">
