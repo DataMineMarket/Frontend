@@ -24,8 +24,8 @@ export default function IntegrationLayout({
     <div className="container relative mt-20">
       <PageHeader className="pb-8">
         <LightDarkImage
-          LightImage={turboIntegrations.starter.imgDark}
-          DarkImage={turboIntegrations.starter.imgLight}
+          LightImage={turboIntegrations.googleFit.imgDark}
+          DarkImage={turboIntegrations.googleFit.imgLight}
           alt="TurboETH Logo"
           width={100}
           height={100}
@@ -36,7 +36,7 @@ export default function IntegrationLayout({
         </PageHeaderDescription>
         <PageHeaderCTA>
           <Link
-            href={turboIntegrations.starter.url}
+            href={turboIntegrations.googleFit.url}
             className={cn(buttonVariants({ variant: "outline" }))}
           >
             <LuBook className="mr-2 h-4 w-4" />

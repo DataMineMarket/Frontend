@@ -4,10 +4,6 @@
 
 import assert from "assert"
 import { networkConfig } from "@/DataNexusContracts/helper-hardhat-config"
-import {
-  arrayBufferToBase64,
-  fromBase64,
-} from "@/DataNexusContracts/utils/conversions"
 
 export const prepareArgs = async (
   authToken: string,
@@ -38,3 +34,19 @@ export const prepareArgs = async (
   return args
 }
 
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  let binary = ""
+  const bytes = new Uint8Array(buffer)
+  const len = bytes.byteLength
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return btoa(binary)
+}
+
+const fromBase64 = (str: string) =>
+  new Uint8Array(
+    atob(str)
+      .split("")
+      .map((c) => c.charCodeAt(0))
+  )

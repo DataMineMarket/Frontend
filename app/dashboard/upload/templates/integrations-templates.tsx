@@ -1,15 +1,11 @@
-import { title } from "process"
 import { ReactNode } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { turboIntegrations } from "@/data/turbo-integrations"
-import { height, width } from "tailwindcss/defaultTheme"
 
 import { PageSectionGrid } from "@/components/layout/page-section"
 import { IsDarkTheme } from "@/components/shared/is-dark-theme"
 import { IsLightTheme } from "@/components/shared/is-light-theme"
 import { LightDarkImage } from "@/components/shared/light-dark-image"
-import { alt } from "@/app/opengraph-image"
 
 export type Integration = {
   title: string
