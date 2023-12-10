@@ -38,14 +38,16 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
     ["decrypt"]
   );
 
-  const decryptedDataAll = "";
+  let decryptedDataAll = "";
+
+  console.log("dataCids", dataCids);
 
   for (const dataCid of dataCids) {
 
   const resp = await fetch(`https://${dataCid}.ipfs.nftstorage.link/`);
 
   const data = (await resp.json()).data;
-
+ 
     // TOOD: return as json data
   try {
   const decryptedData = new TextDecoder().decode(
@@ -57,18 +59,19 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
       base64ToArrayBuffer(data)
     )
   );
-  decryptedDataAll.concat(decryptedData);
+  console.log("decryptedData", decryptedData);
+  decryptedDataAll = decryptedDataAll.concat(decryptedData);
   }
   catch (e) {
     console.log("error", e);
-    decryptedDataAll.concat(JSON.stringify(sampleData));
+   decryptedDataAll = decryptedDataAll.concat(JSON.stringify(sampleData));
   }
 }
   return decryptedDataAll;
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
-    const binaryString = atob(base64);
+    const binaryString = Buffer.from(base64, "base64").toString("binary");
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
