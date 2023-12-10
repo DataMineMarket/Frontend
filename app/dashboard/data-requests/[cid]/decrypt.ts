@@ -58,6 +58,8 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string):
       }
 
       console.log("Decryption")
+      console.log(encryptedAesKey)
+      console.log(dataPrivKey)
 
       // TODO: Fix the error in decryption here
       const decryptedAesKey = await crypto.subtle.decrypt(
@@ -67,7 +69,7 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string):
         importedDataKey,
         base64ToArrayBuffer(encryptedAesKey)
       )
-
+      console.log('test1')
       const aesKey = await crypto.subtle.importKey(
         "raw",
         decryptedAesKey,
@@ -75,6 +77,7 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string):
         true,
         ["decrypt"]
       );
+      console.log('test2')
       const iv = await crypto.subtle.decrypt(
         {
           name: "RSA-OAEP",
@@ -82,6 +85,7 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string):
         importedDataKey,
         base64ToArrayBuffer(encryptedIv)
       )
+      console.log('test3')
 
       const decryptedData = new TextDecoder().decode(await crypto.subtle.decrypt(
         { name: "AES-GCM", iv: new Uint8Array(iv) },
@@ -103,5 +107,6 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string):
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binaryString = Buffer.from(base64, 'base64')
+
   return binaryString
 }

@@ -1,8 +1,1 @@
-{
-  "31337": {
-    "DataListingFactory": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  },
-  "80001": {
-    "DataListingFactory": "0x7E6c303659349d2dccfE6db3602229EC7aFf444D"
-  }
-}
+{"31337":{"DataListingFactory":"0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"},"80001":{"DataListingFactory":"0x83e381F9C648E27f98F8D910a96CdcB8Bd84AA19"}}

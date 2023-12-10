@@ -127,7 +127,7 @@ for (let i = 0; i < chunkData.length; i++) {
 
   if (dataStorageResponse.error) {
       console.log(dataStorageResponse)
-      throw new Error("Data Storage: NFT.storage Error")
+      throw new Error("Data Storage: NFT.storage Error", dataStorageResponse)
   }
 
   dataCids.push(dataStorageResponse.data.value.cid)
@@ -155,5 +155,4 @@ if (aesKeyStorageResponse.error) {
 }
 
 return enc.encode(aesKeyStorageResponse.data.value.cid)
-
   `
