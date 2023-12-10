@@ -1,6 +1,10 @@
+import { createPrivateKey } from "crypto"
+import { useState } from "react"
+
 interface SuccessModalProps {
   isOpen: boolean
   onClose: () => void
+  privKey: string
 }
 
 interface ErrorModalProps {
@@ -9,20 +13,48 @@ interface ErrorModalProps {
   errorMessage: string
 }
 
+interface CopyToClipboardButtonProps {
+  textToCopy: string
+}
+
+const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
+  textToCopy,
+}) => {
+  const [isCopied, setIsCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        setIsCopied(true)
+        setTimeout(() => setIsCopied(false), 2000) // Reset state after 2 seconds
+      })
+      .catch((err) => console.error("Failed to copy text: ", err))
+  }
+
+  return (
+    <button onClick={handleCopy}>
+      {isCopied ? "Copied!" : "Copy to Clipboard"}
+    </button>
+  )
+}
+
 export const SuccessModal: React.FC<SuccessModalProps> = ({
   isOpen,
   onClose,
+  privKey,
 }) => {
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex overflow-auto">
-      <div className="relative m-auto flex w-full max-w-md flex-col rounded-lg bg-white p-8">
+      <div className="relative m-auto flex w-full max-w-md flex-col rounded-lg bg-slate-400 p-8 outline outline-2 outline-offset-2">
         <div className="text-center">
           <h3 className="text-lg">Success</h3>
           <p className="py-4">
             Data Request created successfully! Go to Your Data Request Page to
-            look at your request!
+            look at your request! Save your private key:
+            <CopyToClipboardButton textToCopy={privKey} />
           </p>
           <div className="flex justify-center">
             <button
