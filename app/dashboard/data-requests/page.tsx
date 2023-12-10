@@ -37,8 +37,8 @@ export default function PageDataRequest() {
     address: dataListingFactoryAddress,
     abi: DataListingFactoryAbi,
     functionName: "getOwnerListings", // change this to owner mapped function
-    // args: ["0x6759E6cb48eD1AfDb1DC6DD614Ab7868a595b1cE"],
-    args: [accAddress],
+    args: ["0x6759E6cb48eD1AfDb1DC6DD614Ab7868a595b1cE"],
+    // args: [accAddress],
     watch: true,
     onSuccess: (data: string[]) => {
       console.log("DATA:", data)
