@@ -11,6 +11,8 @@ export type Integration = {
   title: string
   description: string
   href: string
+  price?: string
+  dataPoints?: string[]
   contractAddress?: string
   demo: JSX.Element
 }
