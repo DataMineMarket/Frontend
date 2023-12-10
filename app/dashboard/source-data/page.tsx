@@ -40,10 +40,8 @@ export default function PageSourceData() {
 
   // Throws error if chain id is not in contract addresses
   if (!contractAddresses[chainId]) {
-    throw new Error(
-      `Chain ID ${chainId} is not supported by the DataListingFactory contract` +
-        `Supported chains: ${Object.keys(contractAddresses).join(", ")}`
-    )
+    // pop up error modal
+    console.error("Chain ID not supported")
   }
   const dataListingFactoryAddress =
     contractAddresses[chainId]["DataListingFactory"]
