@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 export async function downloadDecryptedData(dataCids: string[], dataPrivKey: string) {
-    // Replace the following line with your actual data fetching/decrypting logic
+
     const decryptedData = await getDecryptedData(dataCids, dataPrivKey);
 
     // Create a blob from your data
@@ -38,6 +39,8 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
     ["decrypt"]
   );
 
+  console.log("importedDataKey",importedDataKey)
+
   let decryptedDataAll = ""
    for (const cid of dataCids) {
     try {
@@ -53,9 +56,11 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
 
           const data = (await resp.json()).data
 
+          // This works fine
           encryptedData += data
-          console.log(data)
       }
+
+      // TODO: Fix the error in decryption here
       const decryptedAesKey = await crypto.subtle.decrypt(
           {
               name: "RSA-OAEP",
@@ -63,6 +68,7 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
           importedDataKey,
           base64ToArrayBuffer(encryptedAesKey)
       )
+      console.log("decryptedAesKey",decryptedAesKey)
 
       const aesKey = await crypto.subtle.importKey(
           "raw",
@@ -71,7 +77,7 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
           true,
           ["decrypt"]
       );
-
+      console.log("aesKey",aesKey)
       const iv = await crypto.subtle.decrypt(
           {
               name: "RSA-OAEP",
@@ -79,6 +85,8 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
           importedDataKey,
           base64ToArrayBuffer(encryptedIv)
       )
+
+      console.log("iv",iv)
       const decryptedData = new TextDecoder().decode(await crypto.subtle.decrypt(
           { name: "AES-GCM", iv: new Uint8Array(iv) },
           aesKey,
@@ -98,7 +106,8 @@ export async function getDecryptedData(dataCids: string[], dataPrivKey: string) 
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
-    const binaryString = Buffer.from(base64, "base64").toString("binary");
+    const binaryString = atob(base64)
+    console.log("binaryString",binaryString)
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
