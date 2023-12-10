@@ -59,6 +59,7 @@ export default function PageSourceData() {
   const [allowanceIsSufficient, setAllowanceIsSufficient] =
     useState<boolean>(false)
   const [privKey, setPrivKey] = useState<string>("")
+  const [state, setState] = useState<string>("form")
 
   // Button handler to create data listing
   const handleCreateListing = async (
@@ -67,8 +68,33 @@ export default function PageSourceData() {
     event.preventDefault() // Prevent form submission
     try {
       // Assuming the write function is part of the useContractWrite hooks
-      await generateKeys()
+      await new Promise((resolve, reject) => {
+        generateKeys()
+          .then(() => {
+            // Check if keys are set
+            if (tokenKey && dataKey && encryptedSecretsUrls) {
+              resolve(true)
+            } else {
+              reject("Keys generation failed")
+            }
+          })
+          .catch(reject)
+      })
+      console.log(
+        "aRGUMENTS",
+        router,
+        provideScript,
+        "tokenKey" + tokenKey,
+        "dataKey" + dataKey,
+        encryptedSecretsUrls,
+        dataSource,
+        tokenAddress,
+        totalPrice,
+        numListings
+      )
       write?.()
+      setState("creating")
+
       console.log("DATA", data)
       isSuccess && setShowSuccessModal(true)
     } catch (error: any) {
@@ -82,18 +108,11 @@ export default function PageSourceData() {
   // Button handler to approve USDC
   const handleApprove = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault() // Prevent form submission
+    setState("approving")
     try {
       // Assuming the write function is part of the useContractWrite hook
-      generateKeys()
-        .then(() => {
-          approvalWrite?.()
-        })
-        .catch((error) => {
-          console.error("Error generating keys or approving USDC:", error)
-          setErrorMessage(
-            `Error generating keys or approving USDC:, ${error as string}`
-          )
-        })
+
+      approvalWrite?.()
     } catch (error) {
       console.error("Error approving USDC:", error)
     }
@@ -157,7 +176,7 @@ export default function PageSourceData() {
 
     setTokenKey(tokenPubKey)
     generateEncryptedSecretsURL(secrets)
-
+    console.log(secrets)
     return secrets
   }
 
@@ -263,7 +282,12 @@ export default function PageSourceData() {
   // Hook to check if the user has approved sufficent USDC for the DataListingFactory contract
   useEffect(() => {
     if (allowance && totalPrice) {
-      setAllowanceIsSufficient(allowance >= BigInt(totalPrice))
+      if (allowance >= BigInt(totalPrice)) {
+        setAllowanceIsSufficient(true)
+        setState("form")
+      } else {
+        setAllowanceIsSufficient(false)
+      }
     } else {
       setAllowanceIsSufficient(false)
     }
@@ -279,109 +303,130 @@ export default function PageSourceData() {
       whileInView="show"
     >
       <IsWalletConnected>
-        <div className="col-span-12 flex flex-col items-center justify-center lg:col-span-9">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold lg:text-6xl">
-              <span className="bg-gradient-to-br from-indigo-600 to-purple-700 bg-clip-text text-transparent dark:from-indigo-100 dark:to-purple-200">
-                Create Data Request
+        {state === "form" ? (
+          <div className="col-span-12 flex flex-col items-center justify-center lg:col-span-9">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold lg:text-6xl">
+                <span className="bg-gradient-to-br from-indigo-600 to-purple-700 bg-clip-text text-transparent dark:from-indigo-100 dark:to-purple-200">
+                  Create Data Request
+                </span>
+              </h3>
+              <span className="font-light">
+                <div className="my-4"></div>
               </span>
-            </h3>
-            <span className="font-light">
-              <div className="my-4"></div>
-            </span>
+            </div>
+
+            <form className="w-full max-w-xs space-y-4">
+              <div className="mb-4">
+                <label
+                  htmlFor="data-provider"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Select data provider
+                </label>
+                <select
+                  id="data-provider"
+                  name="data-provider"
+                  className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  onChange={(e) => setDataSource(e.target.value)}
+                  value={dataSource}
+                >
+                  <option value="google-fit" className="flex items-center">
+                    <img
+                      src="path-to-google-fit-logo"
+                      alt="Google Fit"
+                      className="mr-2 h-4 w-4"
+                    />
+                    GoogleFit
+                  </option>
+                  <option
+                    value="spotify"
+                    className="flex items-center"
+                    disabled
+                  >
+                    <img
+                      src="path-to-spotify-logo"
+                      alt="Spotify"
+                      className="mr-2 h-4 w-4"
+                    />
+                    Spotify
+                  </option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="num-listings"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Total number of listings
+                </label>
+                <input
+                  id="num-listings"
+                  type="number"
+                  placeholder="Total number of listings"
+                  className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  onChange={(e) => setNumListings(e.target.value)}
+                  value={numListings}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="total-price"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Total price in USDC
+                </label>
+                <input
+                  id="total-price"
+                  type="text"
+                  placeholder="Total price in USDC"
+                  className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  onChange={(e) => {
+                    setTotalPriceDisplay(e.target.value)
+                    setTotalPrice(formatPrice(e.target.value))
+                  }}
+                  value={totalPriceDisplay}
+                />
+              </div>
+              <div className="mb-4">
+                {!allowanceIsSufficient ? (
+                  <button
+                    onClick={handleApprove}
+                    type="button"
+                    className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
+                  >
+                    Approve USDC
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleCreateListing}
+                    type="button"
+                    className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
+                  >
+                    Create Data Listing
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
+        ) : (
+          <div>
+            {state === "approving" ? (
+              <div>Approving Fund Transfer...</div>
+            ) : (
+              <div>
+                {state === "creating" ? (
+                  <div>Creating Data Listing...</div>
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
-          <form className="w-full max-w-xs space-y-4">
-            <div className="mb-4">
-              <label
-                htmlFor="data-provider"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Select data provider
-              </label>
-              <select
-                id="data-provider"
-                name="data-provider"
-                className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                onChange={(e) => setDataSource(e.target.value)}
-                value={dataSource}
-              >
-                <option value="google-fit" className="flex items-center">
-                  <img
-                    src="path-to-google-fit-logo"
-                    alt="Google Fit"
-                    className="mr-2 h-4 w-4"
-                  />
-                  GoogleFit
-                </option>
-                <option value="spotify" className="flex items-center" disabled>
-                  <img
-                    src="path-to-spotify-logo"
-                    alt="Spotify"
-                    className="mr-2 h-4 w-4"
-                  />
-                  Spotify
-                </option>
-              </select>
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="num-listings"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Total number of listings
-              </label>
-              <input
-                id="num-listings"
-                type="number"
-                placeholder="Total number of listings"
-                className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                onChange={(e) => setNumListings(e.target.value)}
-                value={numListings}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="total-price"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Total price in USDC
-              </label>
-              <input
-                id="total-price"
-                type="text"
-                placeholder="Total price in USDC"
-                className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                onChange={(e) => {
-                  setTotalPriceDisplay(e.target.value)
-                  setTotalPrice(formatPrice(e.target.value))
-                }}
-                value={totalPriceDisplay}
-              />
-            </div>
-            <div className="mb-4">
-              {!allowanceIsSufficient ? (
-                <button
-                  onClick={handleApprove}
-                  type="button"
-                  className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
-                >
-                  Approve USDC
-                </button>
-              ) : (
-                <button
-                  onClick={handleCreateListing}
-                  type="button"
-                  className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none"
-                >
-                  Create Data Listing
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
         <SuccessModal
           isOpen={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}

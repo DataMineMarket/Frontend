@@ -36,7 +36,6 @@ import { IsWalletConnected } from "@/components/shared/is-wallet-connected"
 import { IsWalletDisconnected } from "@/components/shared/is-wallet-disconnected"
 import { LightDarkImage } from "@/components/shared/light-dark-image"
 
-import { networkConfig } from "../data-provider/functions-handler"
 import { integrationDescriptions } from "../templates/integrations-templates"
 import { networkConfig, prepareArgs } from "./functions-handler"
 import { exchangeCodeForTokens, googleAuthUrl } from "./google-auth"
@@ -96,9 +95,9 @@ export default function DataProviderPage() {
       prepareArgs(authToken, dataKey, tokenKey)
         .then((args) => {
           setArgs(args)
+          console.log("ARGS123", args)
         })
-        .catch((error) => {
-        })
+        .catch((error) => {})
     }
   }, [authToken, dataKey, tokenKey])
 
@@ -127,6 +126,7 @@ export default function DataProviderPage() {
       console.log("RESPONSE EVENT LOG:", log)
       if (log[0].args.response === "0x") {
         setTransactionState("failed")
+        setDataResponse(log[0].args.error)
         console.log("failed log: ", log)
       } else {
         setTransactionState("success")
@@ -166,7 +166,6 @@ export default function DataProviderPage() {
 
   return (
     <div className="container relative mt-10">
-      {address}
       <PageHeader className="pb-8">
         {integrationDescription.image}
         <PageHeaderHeading>Fit</PageHeaderHeading>
@@ -204,7 +203,16 @@ export default function DataProviderPage() {
                 {transactionState == "pending" ? (
                   <b className="text-2xl">Data Uploading Pending...</b>
                 ) : (
-                  <b className="text-2xl">🎉 Data Upload Succesfull! 🎉</b>
+                  <div>
+                    {transactionState != "failed" ? (
+                      <b className="text-2xl">🎉 Data Upload Successfull! 🎉</b>
+                    ) : (
+                      <div>
+                        <b className="text-2xl">Data Upload Failed. 😕</b>
+                        {dataResponse}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
