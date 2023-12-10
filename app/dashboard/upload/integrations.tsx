@@ -13,9 +13,6 @@ import ReactMarkdown from "react-markdown"
 import Balancer from "react-wrap-balancer"
 import { useContractRead, useNetwork, useSwitchNetwork } from "wagmi"
 
-import { cn } from "@/lib/utils"
-import { fadeUpVariant } from "@/lib/utils/motion"
-import { buttonVariants } from "@/components/ui/button"
 import { PageSectionGrid } from "@/components/layout/page-section"
 
 import { Integration, integrations } from "./templates/integrations-templates"

@@ -1,22 +1,14 @@
 "use client"
 
-import { title } from "process"
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  contractAddresses,
-  DataListingAbi,
-  DataListingFactoryAbi,
-} from "@/contracts"
+import { DataListingAbi, DataListingFactoryAbi } from "@/contracts"
 import { motion, MotionProps } from "framer-motion"
-import ReactMarkdown from "react-markdown"
-import Balancer from "react-wrap-balancer"
 import { useContractRead, useNetwork } from "wagmi"
 
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/config/design"
 import { cn } from "@/lib/utils"
-import { fadeUpVariant } from "@/lib/utils/motion"
 import { buttonVariants } from "@/components/ui/button"
 import {
   PageHeader,
