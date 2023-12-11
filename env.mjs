@@ -25,7 +25,7 @@ export const env = createEnv({
     GITCOIN_PASSPORT_API_KEY: z.string().min(1).optional(),
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
-    NEXT_PUBLIC_GOOGLE_REDIRECT_URL: z.string().min(1).optional(),
+    NEXT_PUBLIC_GOOGLE__URL: z.string().min(1).optional(),
     NEXT_PUBLIC_NFT_STORAGE_API_KEY: z.string().min(1).optional(),
   },
   client: {

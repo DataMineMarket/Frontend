@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios"
 
 const REDIRECT_URI =
   process.env.NODE_ENV === "production"
-    ? env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL?.toString() ??
+    ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL?.toString() ??
       "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
     : "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
 // const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.toString() ?? ""
