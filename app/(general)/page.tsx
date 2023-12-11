@@ -60,7 +60,8 @@ export default function HomePage() {
           Head over to the dashboard to use the data marketplace.
         </p>
         <p className="text-base text-gray-600">
-          Please connect your wallet to the Mumbai network to view the app.
+          Please connect your wallet to the Avalanche Fuji network to view the
+          app.
         </p>
         <Link
           href="/dashboard"
