@@ -14,8 +14,6 @@ import {
 } from "@/components/layout/page-header"
 import { CopyButton } from "@/components/shared/copy-button"
 
-import { Web2Integrations } from "../dashboard/upload/integrations"
-
 export default function HomePage() {
   return (
     <div className="container relative mt-20 px-0">
@@ -57,7 +55,23 @@ export default function HomePage() {
           </CopyButton>
         </PageHeaderCTA>
       </PageHeader>
-      <Web2Integrations />
+      <div className="my-8 flex flex-col items-center justify-center text-center">
+        <p className="text-lg font-semibold">
+          Head over to the dashboard to use the data marketplace.
+        </p>
+        <p className="text-base text-gray-600">
+          Please connect your wallet to the Mumbai network to view the app.
+        </p>
+        <Link
+          href="/dashboard"
+          className={cn(
+            buttonVariants({ variant: "default" }),
+            "mt-4 px-6 py-2"
+          )}
+        >
+          Go to Dashboard
+        </Link>
+      </div>
     </div>
   )
 }
