@@ -2,10 +2,10 @@ import { env } from "@/env.mjs"
 import axios, { AxiosResponse } from "axios"
 
 const REDIRECT_URI =
-  process.env.NODE_ENV === "production"
-    ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL?.toString() ??
-      "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
-    : "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
+  process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL?.toString() ??
+  "http://localhost:3000/dashboard/upload/data-provider?source=GoogleFit"
+
+console.log(REDIRECT_URI)
 // const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.toString() ?? ""
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.toString() ?? ""
 const CLIENT_SECRET =
