@@ -62,47 +62,44 @@ export default function PageSourceData() {
   const [state, setState] = useState<string>("form")
 
   // Button handler to create data listing
+  // const handleCreateListing = async (
+  //   event: React.MouseEvent<HTMLButtonElement>
+  // ) => {
+  //   event.preventDefault() // Prevent form submission
+  //   try {
+  //     // Assuming the write function is part of the useContractWrite hooks
+  //     console.log("SENDING TX")
+  //     await new Promise((resolve, reject) => {
+  //       generateKeys()
+  //         .then(() => {
+  //           // Check if keys are set
+  //           if (tokenKey && dataKey && encryptedSecretsUrls) {
+  //             resolve(true)
+  //           } else {
+  //             reject("Keys generation failed")
+  //           }
+  //         })
+  //         .catch(reject)
+  //     })
+
+  //     write?.()
+  //     setState("creating")
+
+  //     console.log("DATA", data)
+  //     isSuccess && setShowSuccessModal(true)
+  //   } catch (error: any) {
+  //     console.error("Error generating keys or writing to contract:", error)
+  //     setErrorMessage(
+  //       `Error generating keys or writing to contract:, ${error as string}`
+  //     )
+  //   }
+  // }
   const handleCreateListing = async (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault() // Prevent form submission
-    try {
-      // Assuming the write function is part of the useContractWrite hooks
-      await new Promise((resolve, reject) => {
-        generateKeys()
-          .then(() => {
-            // Check if keys are set
-            if (tokenKey && dataKey && encryptedSecretsUrls) {
-              resolve(true)
-            } else {
-              reject("Keys generation failed")
-            }
-          })
-          .catch(reject)
-      })
-      console.log(
-        "aRGUMENTS",
-        router,
-        provideScript,
-        "tokenKey" + tokenKey,
-        "dataKey" + dataKey,
-        encryptedSecretsUrls,
-        dataSource,
-        tokenAddress,
-        totalPrice,
-        numListings
-      )
-      write?.()
-      setState("creating")
-
-      console.log("DATA", data)
-      isSuccess && setShowSuccessModal(true)
-    } catch (error: any) {
-      console.error("Error generating keys or writing to contract:", error)
-      setErrorMessage(
-        `Error generating keys or writing to contract:, ${error as string}`
-      )
-    }
+    console.log("Preparing to send TX")
+    await generateKeys()
   }
 
   // Button handler to approve USDC
@@ -122,7 +119,7 @@ export default function PageSourceData() {
     token_key: string
     ipfsAuth: string
   }
-  const generateKeys = async (): Promise<Secrets> => {
+  const generateKeys = async () => {
     const tokenKeyPair = await crypto.subtle.generateKey(
       {
         name: "RSA-OAEP",
@@ -177,7 +174,6 @@ export default function PageSourceData() {
     setTokenKey(tokenPubKey)
     generateEncryptedSecretsURL(secrets)
     console.log(secrets)
-    return secrets
   }
 
   const toBase64 = (arr: any) => Buffer.from(arr).toString("base64")
@@ -243,6 +239,31 @@ export default function PageSourceData() {
 
   // Calls the create data listing function
   const { data, isLoading, isSuccess, write } = useContractWrite(config)
+
+  useEffect(() => {
+    if (tokenKey && dataKey && encryptedSecretsUrls) {
+      // Trigger the transaction
+      try {
+        console.log(
+          "aRGUMENTS",
+          router,
+          provideScript,
+          "tokenKey" + tokenKey,
+          "dataKey" + dataKey,
+          encryptedSecretsUrls,
+          dataSource,
+          tokenAddress,
+          totalPrice,
+          numListings
+        )
+        write?.()
+        setState("creating")
+      } catch (error) {
+        console.error("Error in transaction:", error)
+        setErrorMessage(`Error in transaction: ${error as string}`)
+      }
+    }
+  }, [tokenKey, dataKey, encryptedSecretsUrls, write])
 
   // Approval hook to approve USDC
   const { config: approvalConfig } = usePrepareContractWrite({
